@@ -29,8 +29,16 @@ namespace Academy.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AcademySiteContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            if (this.Environment.IsDevelopment())
+            {
+                services.AddDbContext<AcademySiteContext>(options =>
+                        options.UseSqlServer(Configuration.GetConnectionString("DevConnection")));
+            }
+            else
+            {
+                services.AddDbContext<AcademySiteContext>(options =>
+                        options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            }
 
             services.AddIdentity<User, Role>()
                 .AddEntityFrameworkStores<AcademySiteContext>()
