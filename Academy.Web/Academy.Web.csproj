@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <UserSecretsId>aspnet-Academy.Web-550EE8FF-35BD-4680-B95E-1B018FAFD393</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Academy.DataContext\Academy.DataContext.csproj" />
+    <ProjectReference Include="..\Academy.Data\Academy.Data.csproj" />
+  </ItemGroup>
+
+</Project>
