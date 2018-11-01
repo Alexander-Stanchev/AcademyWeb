@@ -87,7 +87,7 @@ namespace Academy.Services
             }
         }
 
-        public async Task<IEnumerable<User>> RetrieveStudentsInCourse(int courseId, int roleId, int userId)
+        public async Task<IEnumerable<User>> RetrieveStudentsInCourseAsync(int courseId, int roleId, int userId)
         {
             Validations.RangeNumbers(0, int.MaxValue, userId, "The id of a user can only be a postive number.");
             Validations.RangeNumbers(0, int.MaxValue, courseId, "The id of a course can only be a postive number.");
@@ -98,7 +98,7 @@ namespace Academy.Services
 
             if (course == null)
             {
-                throw new ArgumentNullException("I can't find users in this course. Did you use '_' instead of all the spaces in the course name?");
+                throw new ArgumentNullException("Course doesn't exist");
             }
 
             var teacher = course.Teacher;

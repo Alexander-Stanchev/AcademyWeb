@@ -273,5 +273,75 @@ namespace Academy.Tests
                 Assert.IsTrue(user.EnrolledStudents.Any(es => es.CourseId == 1));
             }
         }
+
+        [TestMethod]
+        public void EnrollStudentShouldThrowIfCourseNotFound()
+        {
+            var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
+                .UseInMemoryDatabase(databaseName: "EnrollStudentShouldThrowIfCourseNotFound")
+                .Options;
+
+            var student = new User()
+            {
+                Id = 1,
+                UserName = "Pesho"
+            };
+
+            var course = new Course()
+            {
+                CourseId = 1,
+                Name = "SQL",
+                TeacherId = 2
+            };
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+                context.Courses.Add(course);
+                context.Users.Add(student);
+
+                context.SaveChanges();
+
+                var courseService = new CourseService(context);
+
+                Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await courseService.EnrollStudentToCourseAsync(1, 2));
+
+            }
+        }
+
+        [TestMethod]
+        public void EnrollStudentShouldThrowIfUserAlreadyEnrolled()
+        {
+            var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
+                .UseInMemoryDatabase(databaseName: "EnrollStudentShouldThrowIfUserAlreadyEnrolled")
+                .Options;
+
+            var course = new Course()
+            {
+                CourseId = 1,
+                Name = "SQL",
+                TeacherId = 2
+            };
+
+            var student = new User()
+            {
+                Id = 1,
+                UserName = "Pesho",
+                EnrolledStudents = new List<EnrolledStudent> { new EnrolledStudent() { Course = course } }
+            };
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+
+                context.Users.Add(student);
+
+                context.SaveChanges();
+
+                var courseService = new CourseService(context);
+
+                Assert.ThrowsExceptionAsync<ArgumentException>(async () => await courseService.EnrollStudentToCourseAsync(1, 1));
+
+            }
+
+        }
     }
 }
