@@ -6,49 +6,49 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Academy.Services
 {
     public class CourseService : ICourseService
     {
         private readonly AcademySiteContext context;
-        private readonly IUserService userService;
-        public CourseService(AcademySiteContext context, IUserService userService)
+
+        public CourseService(AcademySiteContext context)
         {
             this.context = context;
-            this.userService = userService;
+
         }
 
-        public IEnumerable<Course> GetAllCourses()
+        public async Task<IEnumerable<Course>> GetAllCoursesAsync()
         {
-            return this.context.Courses;
+            return await this.context.Courses.ToListAsync();
         }
 
-        public Course GetCourseById(int id)
+        public async Task<Course> GetCourseByIdAsync(int id)
         {
             Validations.RangeNumbers(0, int.MaxValue, id, "The id of a course can only be a postive number.");
-            return this.context.Courses.Find(id);
+            return await this.context.Courses.FirstOrDefaultAsync(co => co.CourseId == id);
         }
 
-        public void AddCourse(int teacherId, DateTime start, DateTime end, int courseId)
+        public async Task<Course> AddCourseAsync(int teacherId, DateTime start, DateTime end, string courseName)
         {
-            var course = this.GetCourseById(courseId);
 
-            var teacher = userService.GetUserById(teacherId);
+            var teacher = await this.context.Users.FirstOrDefaultAsync(us => us.Id == teacherId);
 
             if (teacher.RoleId != 2)
             {
                 throw new ArgumentOutOfRangeException("You don't have access.");
             }
 
-            if (course != null)
+            if (this.context.Courses.Any(co => co.Name == courseName))
             {
                 throw new ArgumentException("Course already exists");
             }
 
-            course = new Course
+            var course = new Course
             {
-                Name = course.Name,
+                Name = courseName,
                 TeacherId = teacher.Id,
                 Start = start,
                 End = end
@@ -57,14 +57,15 @@ namespace Academy.Services
 
 
             context.Courses.Add(course);
-            context.SaveChanges();
+            await context.SaveChangesAsync();
+            return course;
         }
 
-        public void EnrollStudentToCourse(int studentId, int courseId)
+        public async Task EnrollStudentToCourseAsync(int studentId, int courseId)
         {
 
-            var user = this.context.Users.Include(us => us.EnrolledStudents).FirstOrDefault(us => us.Id == studentId);
-            var course = this.context.Courses.FirstOrDefault(co => co.CourseId == courseId);
+            var user = await this.context.Users.Include(us => us.EnrolledStudents).FirstOrDefaultAsync(us => us.Id == studentId);
+            var course = await this.context.Courses.FirstOrDefaultAsync(co => co.CourseId == courseId);
 
             if (course == null)
             {
@@ -86,14 +87,14 @@ namespace Academy.Services
             }
         }
 
-        public IList<User> RetrieveStudentsInCourse(int courseId, int roleId, int userId)
+        public async Task<IEnumerable<User>> RetrieveStudentsInCourse(int courseId, int roleId, int userId)
         {
             Validations.RangeNumbers(0, int.MaxValue, userId, "The id of a user can only be a postive number.");
             Validations.RangeNumbers(0, int.MaxValue, courseId, "The id of a course can only be a postive number.");
             Validations.RangeNumbers(0, int.MaxValue, roleId, "The id of a role can only be a postive number.");
             
 
-            var course = GetCourseById(courseId);
+            var course = await GetCourseByIdAsync(courseId);
 
             if (course == null)
             {
@@ -112,10 +113,10 @@ namespace Academy.Services
                     Grades = user.Grades
                         .Where(gr => gr.Assignment.Course.CourseId == courseId).Select(gr => new Grade { ReceivedGrade = gr.ReceivedGrade }).ToList()
                 })
-                .ToList();
+                .ToListAsync();
 
 
-            return users;
+            return await users;
         }
     }
 }

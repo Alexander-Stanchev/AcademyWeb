@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Academy.Services
 {
@@ -17,14 +18,14 @@ namespace Academy.Services
             this.context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public User GetUserById(int id)
+        public async Task<User> GetUserByIdAsync(int id)
         {
             Validations.RangeNumbers(0, int.MaxValue, id, "Your id can be only a postive number.");
 
-            return this.context.Users.Find(id);
+            return await this.context.Users.FirstOrDefaultAsync(us => us.Id == id);
         }
         
-        public void UpdateRole(int userId, int newRoleId)
+        public async Task UpdateRoleAsync(int userId, int newRoleId)
         {
             Validations.RangeNumbers(0, int.MaxValue, userId, "Your id can be only a postive number.");
 
@@ -33,7 +34,7 @@ namespace Academy.Services
                 throw new InvalidOperationException("You are not allowed to set someone's role to Adminitrator");
             }
 
-            var user = GetUserById(userId);
+            var user = await GetUserByIdAsync(userId);
 
             if (user == null)
             {
@@ -47,12 +48,12 @@ namespace Academy.Services
             context.SaveChanges();
         }
 
-        public void EvaluateStudent(int studentId, int assignmentId, int grade, int teacherId)
+        public async Task EvaluateStudentAsync(int studentId, int assignmentId, int grade, int teacherId)
         {
 
-            var teacher = this.context.Users.Include(us => us.TaughtCourses).FirstOrDefault(us => us.Id == teacherId);
-            var student = this.context.Users.Include(us => us.EnrolledStudents).Include(us => us.Grades).FirstOrDefault(us => us.Id == studentId);
-            var assaignment = this.context.Assignments.Include(c => c.Course).FirstOrDefault(a => a.Id == assignmentId);
+            var teacher = await this.context.Users.Include(us => us.TaughtCourses).FirstOrDefaultAsync(us => us.Id == teacherId);
+            var student = await this.context.Users.Include(us => us.EnrolledStudents).Include(us => us.Grades).FirstOrDefaultAsync(us => us.Id == studentId);
+            var assaignment = await this.context.Assignments.Include(c => c.Course).FirstOrDefaultAsync(a => a.Id == assignmentId);
 
             if (assaignment == null)
             {
