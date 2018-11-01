@@ -22,12 +22,7 @@ namespace Academy.Services
 
             return this.context.Users.Find(id);
         }
-
-        public IEnumerable<Course> GetAllCourses()
-        {
-            return this.context.Courses;
-        }
-
+        
         public void UpdateRole(int userId, int newRoleId)
         {
             Validations.RangeNumbers(0, int.MaxValue, userId, "Your id can be only a postive number.");
