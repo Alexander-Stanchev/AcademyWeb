@@ -22,7 +22,9 @@ namespace Academy.Services
         {
             Validations.RangeNumbers(0, int.MaxValue, id, Validations.POSITIVE_ERROR);
 
-            return await this.context.Users.FirstOrDefaultAsync(us => us.Id == id);
+            var user = await this.context.Users.FirstOrDefaultAsync(us => us.Id == id);
+
+            return user ?? throw new ArgumentNullException(nameof(user));
         }
         
         public async Task UpdateRoleAsync(int userId, int newRoleId)
@@ -45,7 +47,7 @@ namespace Academy.Services
                 user.RoleId = newRoleId;
             }
 
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
         public async Task EvaluateStudentAsync(int studentId, int assignmentId, int grade, int teacherId)
@@ -83,7 +85,7 @@ namespace Academy.Services
             };
 
             student.Grades.Add(newGrade);
-            this.context.SaveChanges();
+            await  this.context.SaveChangesAsync();
         }
 
         

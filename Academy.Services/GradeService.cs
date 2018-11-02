@@ -25,7 +25,7 @@ namespace Academy.Services
             Validations.ValidateLength(Validations.MIN_USERNAME, Validations.MAX_USERNAME, username, $"The username can't be less than {Validations.MIN_USERNAME} and greater than {Validations.MAX_USERNAME}");
             Validations.VerifyUserName(username);
 
-            var teacher = this.context.Users.Include(us => us.TaughtCourses).FirstOrDefault(us => us.UserName == teacherUsername);
+            var teacher = this.context.Users.Include(us => us.TaughtCourses).FirstOrDefault(us => us.UserName == teacherUsername); 
             var student = this.context.Users.Include(us => us.EnrolledStudents).Include(us => us.Grades).FirstOrDefault(us => us.UserName == username);
             var assaignment = this.context.Assignments.Include(c => c.Course).FirstOrDefault(a => a.Id == assignmentId);
 

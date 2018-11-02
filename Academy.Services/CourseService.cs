@@ -83,7 +83,7 @@ namespace Academy.Services
                     CourseId = course.CourseId
                 };
                 user.EnrolledStudents.Add(enrolled);
-                this.context.SaveChanges();
+                await context.SaveChangesAsync();
             }
         }
 

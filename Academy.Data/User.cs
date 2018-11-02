@@ -27,5 +27,6 @@ namespace Academy.Data
         public ICollection<EnrolledStudent> EnrolledStudents { get; set; }
 
         public ICollection<Grade> Grades { get; set; }
+
     }
 }
