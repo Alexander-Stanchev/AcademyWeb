@@ -1,6 +1,8 @@
 ﻿using Academy.Data;
 using Academy.DataContext;
 using Academy.Services.Contracts;
+using Academy.Services.Exceptions;
+using demo_db.Common.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -33,7 +35,7 @@ namespace Academy.Services
 
             if (userId == 1)
             {
-                throw new InvalidOperationException("You are not allowed to set someone's role to Adminitrator");
+                throw new IncorrectPermissionsException("You are not allowed to set someone's role to Adminitrator");
             }
 
             var user = await GetUserByIdAsync(userId);
@@ -61,19 +63,24 @@ namespace Academy.Services
                 throw new ArgumentNullException("Unfortunately there is no such an assignment");
             }
 
+            if (teacher == null)
+            {
+                throw new ArgumentNullException("Unfortunately user does not exist");
+            }
+
             if (teacher != null && assaignment.Course.TeacherId != teacher.Id)
             {
-                throw new ArgumentException($"Teacher {teacher.UserName} is not assigned to {assaignment.Name}.");
+                throw new NotEnrolledInCourseException($"Teacher {teacher.UserName} is not assigned to {assaignment.Name}.");
             }
 
             if (student != null && student.EnrolledStudents.All(c => c.CourseId != assaignment.CourseId))
             {
-                throw new ArgumentException($"Student {student.UserName} is not assigned to {assaignment.Name}.");
+                throw new NotEnrolledInCourseException($"Student {student.UserName} is not assigned to {assaignment.Name}.");
             }
-
+            //TODO: this if needs to be checked 
             if (student.Grades.Any(g => g.AssignmentId == assaignment.Id))
             {
-                throw new ArgumentException("Student already received grade for this assignment.");
+                throw new AlreadyEvaluatedException("Student already received grade for this assignment.");
             }
 
             var newGrade = new Grade

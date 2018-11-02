@@ -1,6 +1,7 @@
 ﻿using Academy.Data;
 using Academy.DataContext;
 using Academy.Services.Contracts;
+using demo_db.Common.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,6 @@ namespace Academy.Services
         public CourseService(AcademySiteContext context)
         {
             this.context = context;
-
         }
 
         public async Task<IEnumerable<Course>> GetAllCoursesAsync()
@@ -43,7 +43,7 @@ namespace Academy.Services
 
             if (this.context.Courses.Any(co => co.Name == courseName))
             {
-                throw new ArgumentException("Course already exists");
+                throw new EntityAlreadyExistsException("Course already exists");
             }
 
             var course = new Course
@@ -53,8 +53,6 @@ namespace Academy.Services
                 Start = start,
                 End = end
             };
-
-
 
             context.Courses.Add(course);
             await context.SaveChangesAsync();
@@ -69,11 +67,11 @@ namespace Academy.Services
 
             if (course == null)
             {
-                throw new ArgumentOutOfRangeException("Unfortunately we are not offering such a course at the moment");
+                throw new CourseDoesntExistsException("Unfortunately we are not offering such a course at the moment");
             }
             else if (user.EnrolledStudents.Any(es => es.CourseId == course.CourseId))
             {
-                throw new ArgumentException($"You are already enrolled for the course {course.Name}.");
+                throw new CourseAlreadyEnrolledException($"You are already enrolled for the course {course.Name}.");
             }
             else
             {
@@ -98,7 +96,7 @@ namespace Academy.Services
 
             if (course == null)
             {
-                throw new ArgumentNullException("Course doesn't exist");
+                throw new CourseDoesntExistsException("Course doesn't exist");
             }
 
 
@@ -108,7 +106,7 @@ namespace Academy.Services
             
             if(teacher == null || teacher.RoleId != 2 || !teacher.TaughtCourses.Any(co => co.CourseId == courseId))
             {
-                throw new ArgumentNullException("","Invalid Permission");
+                throw new IncorrectPermissionsException("Invalid Permission");
             }
 
             var users = this.context.EnrolledStudents
