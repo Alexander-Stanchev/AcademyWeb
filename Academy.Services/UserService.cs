@@ -20,14 +20,14 @@ namespace Academy.Services
 
         public async Task<User> GetUserByIdAsync(int id)
         {
-            Validations.RangeNumbers(0, int.MaxValue, id, "Your id can be only a postive number.");
+            Validations.RangeNumbers(0, int.MaxValue, id, Validations.POSITIVE_ERROR);
 
             return await this.context.Users.FirstOrDefaultAsync(us => us.Id == id);
         }
 
         public async Task UpdateRoleAsync(int userId, int newRoleId)
         {
-            Validations.RangeNumbers(0, int.MaxValue, userId, "Your id can be only a postive number.");
+            Validations.RangeNumbers(0, int.MaxValue, userId, Validations.POSITIVE_ERROR);
 
             if (userId == 1)
             {

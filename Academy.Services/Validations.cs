@@ -15,6 +15,7 @@ namespace Academy.Services
         public const int MAX_ASS = 50;
         public const int MIN_PASSWORD = 3;
         public const int MAX_PASSWORD = 35;
+        public const string POSITIVE_ERROR = "Your id can be only a postive number.";
 
         public static void ValidateLength(int min, int max, string input, string message)
         {
