@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,7 +25,7 @@ namespace Academy.Tests
 
             using (var context = new AcademySiteContext(contextOptions))
             {
-                var courseService = new CourseService(context);
+                
                 context.Courses.Add(new Course()
                 {
                     Name = "DummyCourse",
@@ -40,14 +41,18 @@ namespace Academy.Tests
 
                 });
                 context.SaveChanges();
+            }
 
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+                var courseService = new CourseService(context);
                 var result = await courseService.GetAllCoursesAsync();
 
                 Assert.IsTrue(result.Count() == 2);
                 Assert.IsTrue(result.Any(co => co.Name == "DummyCourse") && result.Any(co => co.Name == "DummyCourseTwo"));
 
-
             }
+            
         }
 
         [TestMethod]
@@ -97,23 +102,28 @@ namespace Academy.Tests
 
             using (var context = new AcademySiteContext(contextOptions))
             {
-                var courseService = new CourseService(context);
 
                 context.Courses.Add(new Course()
                 {
+                    CourseId = 1,
                     Name = "DummyCourse",
                     Start = DateTime.Now,
                     Teacher = new User { Id = 1, UserName = "teacher@abc.bg" }
 
                 });
 
-                context.SaveChanges();
+                await context.SaveChangesAsync();
+            }
 
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+                var courseService = new CourseService(context);
                 var result = await courseService.GetCourseByIdAsync(1);
 
                 Assert.IsTrue(result != null && result.Name == "DummyCourse");
-                
             }
+                
+            
         }
 
         [TestMethod]
