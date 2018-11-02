@@ -28,12 +28,12 @@ namespace Academy.Services
 
             return user ?? throw new ArgumentNullException(nameof(user));
         }
-
+        
         public async Task UpdateRoleAsync(int userId, int newRoleId)
         {
             Validations.RangeNumbers(0, int.MaxValue, userId, Validations.POSITIVE_ERROR);
-
-            if (userId == 1)
+            
+            if (newRoleId == 1)
             {
                 throw new IncorrectPermissionsException("You are not allowed to set someone's role to Adminitrator");
             }
