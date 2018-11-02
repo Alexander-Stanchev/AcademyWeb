@@ -13,11 +13,10 @@ namespace Academy.Services
     public class GradeService : IGradeService
     {
         private readonly AcademySiteContext context;
-        private readonly IUserService userService;
-        public GradeService(AcademySiteContext context, IUserService userService)
+
+        public GradeService(AcademySiteContext context)
         {
             this.context = context;
-            this.userService = userService;
         }
 
         public async Task EvaluateStudentAsync(string username, int assignmentId, int grade, string teacherUsername)

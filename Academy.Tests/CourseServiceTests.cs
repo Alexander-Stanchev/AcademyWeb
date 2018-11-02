@@ -3,6 +3,7 @@ using Academy.DataContext;
 using Academy.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -25,7 +26,7 @@ namespace Academy.Tests
 
             using (var context = new AcademySiteContext(contextOptions))
             {
-                
+
                 context.Courses.Add(new Course()
                 {
                     Name = "DummyCourse",
@@ -41,6 +42,7 @@ namespace Academy.Tests
 
                 });
                 context.SaveChanges();
+
             }
 
             using (var context = new AcademySiteContext(contextOptions))
@@ -52,7 +54,7 @@ namespace Academy.Tests
                 Assert.IsTrue(result.Any(co => co.Name == "DummyCourse") && result.Any(co => co.Name == "DummyCourseTwo"));
 
             }
-            
+
         }
 
         [TestMethod]
@@ -91,7 +93,6 @@ namespace Academy.Tests
             }
         }
 
-        //TO DO: DA PITAME EDO ILI STIVI ZASHTO ZA BOGA GURMI TOVA AKO NE SE PUSNE OTDELNO
         [TestMethod]
         public async Task GetCourseByIdShouldReturnCorrectCourse()
         {
@@ -113,6 +114,7 @@ namespace Academy.Tests
                 });
 
                 await context.SaveChangesAsync();
+
             }
 
             using (var context = new AcademySiteContext(contextOptions))
@@ -122,8 +124,8 @@ namespace Academy.Tests
 
                 Assert.IsTrue(result != null && result.Name == "DummyCourse");
             }
-                
-            
+
+
         }
 
         [TestMethod]
@@ -153,7 +155,7 @@ namespace Academy.Tests
             var startDate = DateTime.Now;
             var endDate = DateTime.Now.AddDays(30);
 
-            using(var context = new AcademySiteContext(contextOptions))
+            using (var context = new AcademySiteContext(contextOptions))
             {
                 var teacher = new User()
                 {
@@ -266,7 +268,7 @@ namespace Academy.Tests
                 TeacherId = 2
             };
 
-            using(var context = new AcademySiteContext(contextOptions))
+            using (var context = new AcademySiteContext(contextOptions))
             {
                 context.Courses.Add(course);
                 context.Users.Add(student);
@@ -352,6 +354,264 @@ namespace Academy.Tests
 
             }
 
+        }
+
+        [TestMethod]
+        public void RetrieveStudentsInCourseShouldThrowIfInvalidCourseId()
+        {
+            var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
+                .UseInMemoryDatabase(databaseName: "RetrieveStudentsInCourseShouldThrowIfInvalidCourseId")
+                .Options;
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+                var courseService = new CourseService(context);
+
+                var expected = Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>
+                    (async () => await courseService.RetrieveStudentsInCourseAsync(-1, 1, 1)).GetAwaiter().GetResult();
+
+                Assert.AreEqual("The id of a course can only be a postive number.", expected.Message);
+            }
+
+        }
+
+        [TestMethod]
+        public void RetrieveStudentsInCourseShouldThrowIfInvalidUserId()
+        {
+            var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
+                .UseInMemoryDatabase(databaseName: "RetrieveStudentsInCourseShouldThrowIfInvalidUserId")
+                .Options;
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+                var courseService = new CourseService(context);
+
+                var expected = Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>
+                    (async () => await courseService.RetrieveStudentsInCourseAsync(1, 1, -1)).GetAwaiter().GetResult();
+
+                Assert.AreEqual("The id of a user can only be a postive number.", expected.Message);
+            }
+
+        }
+
+        [TestMethod]
+        public void RetrieveStudentsInCourseShouldThrowIfInvalidRoleId()
+        {
+            var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
+                .UseInMemoryDatabase(databaseName: "RetrieveStudentsInCourseShouldThrowIfInvalidRoleId")
+                .Options;
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+                var courseService = new CourseService(context);
+
+                var expected = Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>
+                    (async () => await courseService.RetrieveStudentsInCourseAsync(1, -1, 1)).GetAwaiter().GetResult();
+
+                Assert.AreEqual("The id of a role can only be a postive number.", expected.Message);
+            }
+
+        }
+
+        [TestMethod]
+        public void RetrieveStudentsInCourseShouldThrowIfCourseNotFound()
+        {
+            var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
+                .UseInMemoryDatabase(databaseName: "RetrieveStudentsInCourseShouldThrowIfCourseNotFound")
+                .Options;
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+                var courseService = new CourseService(context);
+                Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await courseService.RetrieveStudentsInCourseAsync(1, 1, 2));
+            }
+        }
+
+        [TestMethod]
+        public void RetrieveStudentsInCourseShouldThrowIfUserNotCorrectTeacher()
+        {
+            var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
+                .UseInMemoryDatabase(databaseName: "RetrieveStudentsInCourseShouldThrowIfUserNotCorrectTeacher")
+                .Options;
+
+            var notTeacher = new User()
+            {
+                Id = 1,
+                RoleId = 2,
+                UserName = "PeshoLosta"
+            };
+
+            var actualTeacher = new User()
+            {
+                Id = 2,
+                RoleId = 2,
+                UserName = "PeshoLosta2"
+            };
+
+            var course = new Course()
+            {
+                CourseId = 1,
+                Teacher = actualTeacher,
+                Name = "SQL"
+            };
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+                context.Users.Add(notTeacher);
+                context.Courses.Add(course);
+
+                context.SaveChanges();
+
+                var courseService = new CourseService(context);
+
+                var error = Assert.ThrowsExceptionAsync<ArgumentNullException>
+                    (async () => await courseService.RetrieveStudentsInCourseAsync(1, 2, 1)).GetAwaiter().GetResult();
+                Assert.AreEqual("Invalid Permission", error.Message);
+                
+            }
+        }
+
+        [TestMethod]
+        public void RetrieveStudentsInCourseShouldThrowIfUserNotTeacher()
+        {
+            var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
+                .UseInMemoryDatabase(databaseName: "RetrieveStudentsInCourseShouldThrowIfUserNotTeacher")
+                .Options;
+
+            var notTeacher = new User()
+            {
+                Id = 1,
+                RoleId = 3,
+                UserName = "PeshoLosta"
+            };
+
+            var actualTeacher = new User()
+            {
+                Id = 2,
+                RoleId = 2,
+                UserName = "PeshoLosta2"
+            };
+
+            var course = new Course()
+            {
+                CourseId = 1,
+                Teacher = actualTeacher,
+                Name = "SQL"
+            };
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+                context.Users.Add(notTeacher);
+                context.Courses.Add(course);
+
+                context.SaveChanges();
+
+                var courseService = new CourseService(context);
+
+                var error = Assert.ThrowsExceptionAsync<ArgumentNullException>
+                    (async () => await courseService.RetrieveStudentsInCourseAsync(1, 2, 1)).GetAwaiter().GetResult();
+                Assert.AreEqual("Invalid Permission", error.Message);
+
+            }
+        }
+
+        [TestMethod]
+        public void RetrieveStudentsInCourseShouldThrowIfUserNotFound()
+        {
+            var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
+                .UseInMemoryDatabase(databaseName: "RetrieveStudentsInCourseShouldThrowIfUserNotFound")
+                .Options;
+
+
+            var course = new Course()
+            {
+                CourseId = 1,
+                Name = "SQL"
+            };
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+
+                context.Courses.Add(course);
+
+                context.SaveChanges();
+
+                var courseService = new CourseService(context);
+
+                var error = Assert.ThrowsExceptionAsync<ArgumentNullException>
+                    (async () => await courseService.RetrieveStudentsInCourseAsync(1, 2, 1)).GetAwaiter().GetResult();
+                Assert.AreEqual("Invalid Permission", error.Message);
+
+            }
+        }
+
+        [TestMethod]
+        public async Task RetrieveStudentsInCourseShouldRetrieveCorrectStudents()
+        {
+            var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
+                .UseInMemoryDatabase(databaseName: "RetrieveStudentsInCourseShouldRetrieveCorrectStudents")
+                .Options;
+
+            var studentOne = new User()
+            {
+                Id = 2,
+                RoleId = 3,
+                UserName = "PeshoLosta"
+            };
+
+            var studentTwo = new User()
+            {
+                Id = 3,
+                RoleId = 3,
+                UserName = "LeshoPosta",
+
+            };
+
+            var studentThree = new User()
+            {
+                Id = 4,
+                RoleId = 3,
+                UserName = "GoshoBokluka"
+            };
+
+            var actualTeacher = new User()
+            {
+                Id = 1,
+                RoleId = 2,
+                UserName = "PeshoLosta2"
+            };
+
+            var course = new Course()
+            {
+                CourseId = 1,
+                Teacher = actualTeacher,
+                Name = "SQL",
+                EnrolledStudents = new List<EnrolledStudent>()
+                {
+                    new EnrolledStudent(){Student = studentOne, CourseId = 1},
+                    new EnrolledStudent(){Student = studentTwo, CourseId = 1}
+                }
+
+            };
+
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+                context.Courses.Add(course);
+
+                context.Users.Add(studentThree);
+
+                context.SaveChanges();
+
+                var courseService = new CourseService(context);
+
+                var result = await courseService.RetrieveStudentsInCourseAsync(1,2,1);
+
+                Assert.IsTrue(result.Count() == 2);
+                Assert.IsTrue(result.Any(re => re.EnrolledStudents.Any(en => en.StudentId == 2)));
+                Assert.IsTrue(result.Any(re => re.EnrolledStudents.Any(en => en.StudentId == 3)));
+
+            }
         }
     }
 }

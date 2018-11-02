@@ -26,7 +26,7 @@ namespace Academy.Services
 
             return user ?? throw new ArgumentNullException(nameof(user));
         }
-        
+
         public async Task UpdateRoleAsync(int userId, int newRoleId)
         {
             Validations.RangeNumbers(0, int.MaxValue, userId, Validations.POSITIVE_ERROR);
@@ -52,7 +52,6 @@ namespace Academy.Services
 
         public async Task EvaluateStudentAsync(int studentId, int assignmentId, int grade, int teacherId)
         {
-
             var teacher = await this.context.Users.Include(us => us.TaughtCourses).FirstOrDefaultAsync(us => us.Id == teacherId);
             var student = await this.context.Users.Include(us => us.EnrolledStudents).Include(us => us.Grades).FirstOrDefaultAsync(us => us.Id == studentId);
             var assaignment = await this.context.Assignments.Include(c => c.Course).FirstOrDefaultAsync(a => a.Id == assignmentId);
@@ -88,6 +87,6 @@ namespace Academy.Services
             await  this.context.SaveChangesAsync();
         }
 
-        
+
     }
 }
