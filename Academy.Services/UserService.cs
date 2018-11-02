@@ -24,7 +24,7 @@ namespace Academy.Services
 
             return await this.context.Users.FirstOrDefaultAsync(us => us.Id == id);
         }
-        
+
         public async Task UpdateRoleAsync(int userId, int newRoleId)
         {
             Validations.RangeNumbers(0, int.MaxValue, userId, "Your id can be only a postive number.");
@@ -50,7 +50,6 @@ namespace Academy.Services
 
         public async Task EvaluateStudentAsync(int studentId, int assignmentId, int grade, int teacherId)
         {
-
             var teacher = await this.context.Users.Include(us => us.TaughtCourses).FirstOrDefaultAsync(us => us.Id == teacherId);
             var student = await this.context.Users.Include(us => us.EnrolledStudents).Include(us => us.Grades).FirstOrDefaultAsync(us => us.Id == studentId);
             var assaignment = await this.context.Assignments.Include(c => c.Course).FirstOrDefaultAsync(a => a.Id == assignmentId);
@@ -83,9 +82,9 @@ namespace Academy.Services
             };
 
             student.Grades.Add(newGrade);
-            this.context.SaveChanges();
+            await this.context.SaveChangesAsync();
         }
 
-        
+
     }
 }

@@ -20,7 +20,7 @@ namespace Academy.Services
         {
             if (input.Length < min || input.Length > max)
             {
-                throw new ArgumentOutOfRangeException(message);
+                throw new ArgumentOutOfRangeException("",message);
             }
         }
 
@@ -28,7 +28,7 @@ namespace Academy.Services
         {
             if (id < min || id > max)
             {
-                throw new ArgumentOutOfRangeException(message);
+                throw new ArgumentOutOfRangeException("",message);
             }
         }
 

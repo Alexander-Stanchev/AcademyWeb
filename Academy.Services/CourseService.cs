@@ -101,18 +101,20 @@ namespace Academy.Services
                 throw new ArgumentNullException("Course doesn't exist");
             }
 
-            var teacher = course.Teacher;
 
+            var teacher = await this.context.Users
+                .Include(us => us.TaughtCourses)
+                .FirstOrDefaultAsync(us => us.Id == userId);
+            
+            if(teacher == null || teacher.RoleId != 2 || !teacher.TaughtCourses.Any(co => co.CourseId == courseId))
+            {
+                throw new ArgumentNullException("","Invalid Permission");
+            }
 
-            var users = this.context.Users
-                .Where(us => us.EnrolledStudents.Any(es => es.Course.CourseId == courseId))
-                .Select(user => new User
-                {
-                    UserName = user.UserName,
-                    FullName = user.FullName,
-                    Grades = user.Grades
-                        .Where(gr => gr.Assignment.Course.CourseId == courseId).Select(gr => new Grade { ReceivedGrade = gr.ReceivedGrade }).ToList()
-                })
+            var users = this.context.EnrolledStudents
+                .Where(en => en.CourseId == courseId)
+                .Select(en => en.Student)
+                .Include(st => st.Grades)
                 .ToListAsync();
 
 
