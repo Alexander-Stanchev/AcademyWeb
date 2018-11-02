@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Academy.Services
 {
@@ -19,7 +20,7 @@ namespace Academy.Services
             this.userService = userService;
         }
 
-        public void EvaluateStudent(string username, int assignmentId, int grade, string teacherUsername)
+        public async Task EvaluateStudentAsync(string username, int assignmentId, int grade, string teacherUsername)
         {
             Validations.ValidateLength(Validations.MIN_USERNAME, Validations.MAX_USERNAME, username, $"The username can't be less than {Validations.MIN_USERNAME} and greater than {Validations.MAX_USERNAME}");
             Validations.VerifyUserName(username);
@@ -56,7 +57,7 @@ namespace Academy.Services
             };
 
             student.Grades.Add(newGrade);
-            this.context.SaveChanges();
+            await this.context.SaveChangesAsync();
         }
     }
 }

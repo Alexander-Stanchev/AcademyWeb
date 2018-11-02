@@ -1,7 +1,9 @@
-﻿namespace Academy.Services.Contracts
+﻿using System.Threading.Tasks;
+
+namespace Academy.Services.Contracts
 {
     public interface IGradeService
     {
-        void EvaluateStudent(string username, int assignmentId, int grade, string teacherUsername);
+        Task EvaluateStudentAsync(string username, int assignmentId, int grade, string teacherUsername);
     }
 }
