@@ -1,6 +1,7 @@
 ﻿using Academy.Data;
 using Academy.DataContext;
 using Academy.Services;
+using demo_db.Common.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -464,7 +465,7 @@ namespace Academy.Tests
 
                 var courseService = new CourseService(context);
 
-                var error = Assert.ThrowsExceptionAsync<ArgumentNullException>
+                var error = Assert.ThrowsExceptionAsync<IncorrectPermissionsException>
                     (async () => await courseService.RetrieveStudentsInCourseAsync(1, 2, 1)).GetAwaiter().GetResult();
                 Assert.AreEqual("Invalid Permission", error.Message);
                 
@@ -508,7 +509,7 @@ namespace Academy.Tests
 
                 var courseService = new CourseService(context);
 
-                var error = Assert.ThrowsExceptionAsync<ArgumentNullException>
+                var error = Assert.ThrowsExceptionAsync<IncorrectPermissionsException>
                     (async () => await courseService.RetrieveStudentsInCourseAsync(1, 2, 1)).GetAwaiter().GetResult();
                 Assert.AreEqual("Invalid Permission", error.Message);
 
@@ -538,7 +539,7 @@ namespace Academy.Tests
 
                 var courseService = new CourseService(context);
 
-                var error = Assert.ThrowsExceptionAsync<ArgumentNullException>
+                var error = Assert.ThrowsExceptionAsync<IncorrectPermissionsException>
                     (async () => await courseService.RetrieveStudentsInCourseAsync(1, 2, 1)).GetAwaiter().GetResult();
                 Assert.AreEqual("Invalid Permission", error.Message);
 
