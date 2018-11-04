@@ -6,11 +6,27 @@
 <div class="row">
     <div class="col-md-12">
         <h3>Hello @Model.UserName</h3>
-        @foreach (var course in Model.Courses)
-        {
-            <h5>@course.Name</h5>
-            <h5>@course.Start.ToShortDateString()</h5>
-            <h5>@course.End.ToShortDateString()</h5>
-        }
+        <table class="table table-hover table-responsive table-bordered">
+            <caption class="caption">Courses taught by you</caption>
+            <thead>
+                <tr>
+                    <th>Course Name</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Enrolled Students</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var course in Model.Courses)
+                {
+                <tr>
+                    <td>@course.Name</td>
+                    <td>@course.Start.ToShortDateString()</td>
+                    <td>@course.End.ToShortDateString()</td>
+                    <td>@course.EnrolledStudentCount</td>
+                </tr>
+                }
+            </tbody>
+        </table>
     </div>
 </div>

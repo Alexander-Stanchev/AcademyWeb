@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Academy.Data;
 using Academy.Services.Contracts;
@@ -29,10 +27,11 @@ namespace Academy.Web.Areas.Teacher.Controllers
         public async Task<IActionResult> Index()
         {
             var userId = int.Parse(this.userManager.GetUserId(HttpContext.User));
-            var courses = await this.courseService.GetAllCoursesAsync();
+            var user = await this.userService.GetUserByIdAsync(userId);
+            var courses = await this.courseService.RetrieteCoursesByTeacherAsync(userId);
             var model = new CoursesByTeacherViewModel()
             {
-                UserName = userId,
+                UserName = user.FullName,
                 Courses = courses.Select(co => new CourseViewModel(co))
             };
 

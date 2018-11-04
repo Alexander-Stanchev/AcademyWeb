@@ -118,5 +118,11 @@ namespace Academy.Services
 
             return await users;
         }
+
+        public async Task<IEnumerable<Course>> RetrieteCoursesByTeacherAsync(int teacherId)
+        {
+            Validations.RangeNumbers(0, int.MaxValue, teacherId, "The id of a course can only be a postive number.");
+            return await this.context.Courses.Include(co => co.EnrolledStudents).Where(co => co.TeacherId == teacherId).ToListAsync();
+        }
     }
 }

@@ -13,8 +13,10 @@ namespace Academy.Web.Areas.Teacher.Models
             this.Name = course.Name;
             this.Start = course.Start;
             this.End = course.End;
+            this.EnrolledStudentCount = course.EnrolledStudents.Count;
         }
         public string Name { get; set; }
+        public int EnrolledStudentCount { get; set; }
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
     }
