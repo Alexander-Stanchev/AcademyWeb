@@ -32,9 +32,17 @@
                 <ul class="nav navbar-nav">
                     <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                    @if (User.IsInRole("Teacher")) //FOR TEST PURPOSES
+                    @if (User.IsInRole("Teacher"))
                     {
-                        <li><a>Teacher STUFF</a>></li>
+                        <li><a asp-area="teacher" asp-controller="dashboard" asp-action="index">Teacher Dashboard</a></li>
+                    }
+                    @if (User.IsInRole("Adiministrator"))
+                    {
+                        <li><a asp-area="administrator" asp-controller="dashboard" asp-action="index">Administrator Dashboard</a></li>
+                    }
+                    @if (User.IsInRole("Student"))
+                    {
+                        <li><a asp-area="student" asp-controller="dashboard" asp-action="index">student Dashboard</a></li>
                     }
                     <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
                 </ul>

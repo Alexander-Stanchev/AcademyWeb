@@ -614,5 +614,69 @@ namespace Academy.Tests
 
             }
         }
+
+        [TestMethod]
+        public async Task RetrieveCoursesByTeacherShouldReturnCorrectCourses()
+        {
+            var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
+                .UseInMemoryDatabase(databaseName: "RetrieveCoursesByTeacherShouldReturnCorrectCourses")
+                .Options;
+
+            var courseByTeacher = new Course()
+            {
+                CourseId = 1,
+                Name = "SQL",
+                Teacher = new User
+                {
+                    UserName = "Pesho",
+                    RoleId = 2
+                }
+            };
+
+            var courseNotByTeacher = new Course()
+            {
+                CourseId = 2,
+                Name = "SQL2",
+                Teacher = new User
+                {
+                    UserName = "Gosho",
+                    RoleId = 2
+                }
+            };
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+                context.Courses.Add(courseByTeacher);
+
+                context.Courses.Add(courseNotByTeacher);
+
+                context.SaveChanges();
+
+                var courseService = new CourseService(context);
+
+                var result = await courseService.RetrieteCoursesByTeacherAsync(1);
+
+                Assert.IsTrue(result.Count() == 1);
+                Assert.IsTrue(result.Any(co => co.Teacher.UserName == "Pesho"));
+
+            }
+        }
+
+        [TestMethod]
+        public void RetrieveCoursesByTeacherThrowWhenIdInvalid()
+        {
+            var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
+                .UseInMemoryDatabase(databaseName: "RetrieveCoursesByTeacherThrowWhenIdInvalid")
+                .Options;
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+
+                var courseService = new CourseService(context);
+
+                Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await courseService.RetrieteCoursesByTeacherAsync(-1));
+
+            }
+        }
     }
 }
