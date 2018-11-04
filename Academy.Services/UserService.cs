@@ -52,6 +52,13 @@ namespace Academy.Services
             await context.SaveChangesAsync();
         }
 
+        public async Task<IEnumerable<User>> RetrieveUsers()
+        {
+            var users = await this.context.Users.Where(us => us.RoleId == 3).ToListAsync();
+
+            return users;
+        }
+
         public async Task EvaluateStudentAsync(int studentId, int assignmentId, int grade, int teacherId)
         {
             var teacher = await this.context.Users.Include(us => us.TaughtCourses).FirstOrDefaultAsync(us => us.Id == teacherId);
