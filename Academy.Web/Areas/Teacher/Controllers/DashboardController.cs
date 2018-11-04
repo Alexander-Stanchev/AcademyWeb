@@ -37,5 +37,12 @@ namespace Academy.Web.Areas.Teacher.Controllers
 
             return View(model);
         }
+
+        [Area("Teacher")]
+        [Authorize(Roles ="Teacher")]
+        public IActionResult Add()
+        {
+            return this.View();
+        }
     }
 }
