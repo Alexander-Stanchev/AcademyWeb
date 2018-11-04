@@ -1,0 +1,16 @@
+﻿@model Academy.Web.Areas.Teacher.Models.CoursesByTeacherViewModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <h3>Hello @Model.UserName</h3>
+        @foreach (var course in Model.Courses)
+        {
+            <h5>@course.Name</h5>
+            <h5>@course.Start.ToShortDateString()</h5>
+            <h5>@course.End.ToShortDateString()</h5>
+        }
+    </div>
+</div>

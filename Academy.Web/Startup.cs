@@ -12,6 +12,8 @@ using Academy.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Academy.DataContext;
 using Academy.Data;
+using Academy.Services;
+using Academy.Services.Contracts;
 
 namespace Academy.Web
 {
@@ -43,6 +45,9 @@ namespace Academy.Web
             services.AddIdentity<User, Role>()
                 .AddEntityFrameworkStores<AcademySiteContext>()
                 .AddDefaultTokenProviders();
+
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ICourseService, CourseService>();
 
             if (this.Environment.IsDevelopment())
             {
@@ -87,7 +92,7 @@ namespace Academy.Web
             {
                 routes.MapRoute(
                   name: "areas",
-                  template: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+                  template: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}"
                 );
 
                 routes.MapRoute(
