@@ -13,11 +13,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Academy.DataContext\Academy.DataContext.csproj" />
     <ProjectReference Include="..\Academy.Data\Academy.Data.csproj" />
+    <ProjectReference Include="..\Academy.Services\Academy.Services.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\" />
-    <Folder Include="Areas\Administration\Controllers\" />
     <Folder Include="Areas\Administration\Models\" />
     <Folder Include="Areas\Administration\Views\" />
     <Folder Include="Areas\Student\Controllers\" />
