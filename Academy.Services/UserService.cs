@@ -52,11 +52,11 @@ namespace Academy.Services
             await context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<User>> RetrieveUsers()
+        public async Task<IEnumerable<User>> RetrieveUsers(int roleId)
         {
-            var users = await this.context.Users.Where(us => us.RoleId == 3).ToListAsync();
+            var users = await this.context.Users.Where(us => us.RoleId == roleId).ToListAsync();
 
-            return users;
+            return users ?? throw new ArgumentNullException(nameof(users));
         }
 
         public async Task EvaluateStudentAsync(int studentId, int assignmentId, int grade, int teacherId)
