@@ -212,7 +212,7 @@ namespace Academy.Tests
         }
 
         [TestMethod]
-        public async Task RetriveUsersShouldThrowExceptionWhenNoUsersFound()
+        public async Task RetriveUsersShouldReturnUsers()
         {
             var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
                 .UseInMemoryDatabase(databaseName: "RetriveUsersShouldThrowExceptionWhenNoUsersFound")
@@ -248,6 +248,8 @@ namespace Academy.Tests
                 Assert.IsTrue(usersList.Count == 2);
             }
         }
+
+
 
 
     }
