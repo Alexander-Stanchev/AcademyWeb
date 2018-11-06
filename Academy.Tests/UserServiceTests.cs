@@ -1,6 +1,7 @@
 using Academy.Data;
 using Academy.DataContext;
 using Academy.Services;
+using Academy.Services.Exceptions;
 using demo_db.Common.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -249,8 +250,379 @@ namespace Academy.Tests
             }
         }
 
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public async Task EvaluateStudentShouldThrowExceptionIfStudentIdIsInvalid()
+        {
+            var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
+    .UseInMemoryDatabase(databaseName: "EvaluateStudentShouldThrowExceptionIfStudentIdIsInvalid")
+    .Options;
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+
+                context.Users.Add(new User()
+                {
+                    Id = 1,
+                    UserName = "pesho12",
+                    FullName = "Pesho Peshev",
+                    RoleId = 2
+                });
+
+                context.Users.Add(new User()
+                {
+                    Id = 2,
+                    UserName = "gosho34",
+                    FullName = "Gosho Goshev",
+                    RoleId = 3
+                });
+                context.Assignments.Add(new Assignment()
+                {
+                    Id = 1,
+                    Name = "Grebane s lajica",
+                    MaxPoints  = 100,
+                    CourseId = 1
+                });
+
+                context.Courses.Add(new Course()
+                {
+                    CourseId = 1,
+                    Name = "asdv"
+                });
+
+                context.SaveChanges();
+            }
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+                var userService = new UserService(context);
+                await userService.EvaluateStudentAsync(78,1,45,1);
+            }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public async Task EvaluateStudentShouldThrowExceptionIfTeacherIdIsInvalid()
+        {
+            var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
+    .UseInMemoryDatabase(databaseName: "EvaluateStudentShouldThrowExceptionIfTeacherIdIsInvalid")
+    .Options;
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+
+                context.Users.Add(new User()
+                {
+                    Id = 1,
+                    UserName = "pesho12",
+                    FullName = "Pesho Peshev",
+                    RoleId = 1
+                });
+
+                context.Users.Add(new User()
+                {
+                    Id = 2,
+                    UserName = "gosho34",
+                    FullName = "Gosho Goshev",
+                    RoleId = 3
+                });
+                context.Assignments.Add(new Assignment()
+                {
+                    Id = 1,
+                    Name = "Grebane s lajica",
+                    MaxPoints = 100,
+                    CourseId = 1
+                });
+
+                context.Courses.Add(new Course()
+                {
+                    CourseId = 1,
+                    Name = "asdv"
+                });
+
+                context.SaveChanges();
+            }
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+                var userService = new UserService(context);
+                await userService.EvaluateStudentAsync(1, 1, 45, 12);
+            }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public async Task EvaluateStudentShouldThrowExceptionIfAssignmentntIdIsInvalid()
+        {
+            var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
+    .UseInMemoryDatabase(databaseName: "EvaluateStudentShouldThrowExceptionIfAssignmentntIdIsInvalid")
+    .Options;
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+
+                context.Users.Add(new User()
+                {
+                    Id = 1,
+                    UserName = "pesho12",
+                    FullName = "Pesho Peshev",
+                    RoleId = 2
+                });
+
+                context.Users.Add(new User()
+                {
+                    Id = 2,
+                    UserName = "gosho34",
+                    FullName = "Gosho Goshev",
+                    RoleId = 3
+                });
+
+                context.Courses.Add(new Course()
+                {
+                    CourseId = 1,
+                    Name = "asdv"
+                });
+
+                context.SaveChanges();
+            }
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+                var userService = new UserService(context);
+                await userService.EvaluateStudentAsync(1, 1, 45, 2);
+            }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(NotEnrolledInCourseException))]
+        public async Task EvaluateStudentShouldThrowExceptionIfTeacherNotAssignedForThisCourse()
+        {
+            var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
+    .UseInMemoryDatabase(databaseName: "EvaluateStudentShouldThrowExceptionIfTeacherNotAssignedForThisCourse")
+    .Options;
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+
+                context.Users.Add(new User()
+                {
+                    Id = 1,
+                    UserName = "pesho12",
+                    FullName = "Pesho Peshev - Uchitelq",
+                    RoleId = 2
+                });
+
+                context.Users.Add(new User()
+                {
+                    Id = 2,
+                    UserName = "gosho34",
+                    FullName = "Gosho Goshev - Studentcheto",
+                    RoleId = 3
+                });
+                context.Assignments.Add(new Assignment()
+                {
+                    Id = 1,
+                    Name = "Grebane s lajica",
+                    MaxPoints = 100,
+                    CourseId = 1
+                });
+
+                context.Courses.Add(new Course()
+                {
+                    CourseId = 1,
+                    Name = "asdv",
+                    TeacherId = 12
+                });
+
+                context.SaveChanges();
+            }
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+                var userService = new UserService(context);
+                await userService.EvaluateStudentAsync(2, 1, 45, 1);
+            }
+        }
 
 
+        [TestMethod]
+        [ExpectedException(typeof(NotEnrolledInCourseException))]
+        public async Task EvaluateStudentShouldThrowExceptionIfStudentNotAssignedForThisCourse()
+        {
+            var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
+    .UseInMemoryDatabase(databaseName: "EvaluateStudentShouldThrowExceptionIfStudentNotAssignedForThisCourse")
+    .Options;
 
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+
+                context.Users.Add(new User()
+                {
+                    Id = 1,
+                    UserName = "pesho12",
+                    FullName = "Pesho Peshev - Uchitelq",
+                    RoleId = 2
+                });
+
+                context.Users.Add(new User()
+                {
+                    Id = 2,
+                    UserName = "gosho34",
+                    FullName = "Gosho Goshev - Studentcheto",
+                    RoleId = 3
+                });
+                context.Assignments.Add(new Assignment()
+                {
+                    Id = 1,
+                    Name = "Grebane s lajica",
+                    MaxPoints = 100,
+                    CourseId = 1
+                });
+
+                context.Courses.Add(new Course()
+                {
+                    CourseId = 1,
+                    Name = "asdv",
+                    TeacherId = 1
+                });
+
+                context.EnrolledStudents.Add(new EnrolledStudent()
+                {
+
+                });
+
+                context.SaveChanges();
+            }
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+                var userService = new UserService(context);
+                await userService.EvaluateStudentAsync(2, 1, 45, 1);
+            }
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(AlreadyEvaluatedException))]
+        public async Task EvaluateStudentShouldThrowExceptionIfStudentAlreadyEvaluatedForThisCourse()
+        {
+            var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
+    .UseInMemoryDatabase(databaseName: "EvaluateStudentShouldThrowExceptionIfStudentAlreadyEvaluatedForThisCourse")
+    .Options;
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+
+                context.Users.Add(new User()
+                {
+                    Id = 1,
+                    UserName = "pesho12",
+                    FullName = "Pesho Peshev - Uchitelq",
+                    RoleId = 2
+                });
+
+                context.Users.Add(new User()
+                {
+                    Id = 2,
+                    UserName = "gosho34",
+                    FullName = "Gosho Goshev - Studentcheto",
+                    RoleId = 3
+                });
+                context.Assignments.Add(new Assignment()
+                {
+                    Id = 1,
+                    Name = "Grebane s lajica",
+                    MaxPoints = 100,
+                    CourseId = 1
+                });
+
+                context.Courses.Add(new Course()
+                {
+                    CourseId = 1,
+                    Name = "asdv",
+                    TeacherId = 1
+                });
+
+                context.EnrolledStudents.Add(new EnrolledStudent()
+                {
+                    StudentId = 2,
+                    CourseId = 1
+                });
+
+                context.Grades.Add(new Grade()
+                {
+                    StudentId = 2,
+                    ReceivedGrade = 43,
+                    AssignmentId = 1
+                });
+
+                context.SaveChanges();
+            }
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+                var userService = new UserService(context);
+                await userService.EvaluateStudentAsync(2, 1, 45, 1);
+            }
+        }
+
+        [TestMethod]
+        public async Task EvaluateStudentShouldAddGradeWhenCorrectParametersArePassed()
+        {
+            var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
+    .UseInMemoryDatabase(databaseName: "EvaluateStudentShouldAddGradeWhenCorrectParametersArePassed")
+    .Options;
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+
+                context.Users.Add(new User()
+                {
+                    Id = 1,
+                    UserName = "pesho12",
+                    FullName = "Pesho Peshev - Uchitelq",
+                    RoleId = 2
+                });
+
+                context.Users.Add(new User()
+                {
+                    Id = 2,
+                    UserName = "gosho34",
+                    FullName = "Gosho Goshev - Studentcheto",
+                    RoleId = 3
+                });
+                context.Assignments.Add(new Assignment()
+                {
+                    Id = 1,
+                    Name = "Grebane s lajica",
+                    MaxPoints = 100,
+                    CourseId = 1
+                });
+
+                context.Courses.Add(new Course()
+                {
+                    CourseId = 1,
+                    Name = "asdv",
+                    TeacherId = 1
+                });
+
+                context.EnrolledStudents.Add(new EnrolledStudent()
+                {
+                    StudentId = 2,
+                    CourseId = 1
+                });
+
+                context.SaveChanges();
+            }
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+                var userService = new UserService(context);
+                await userService.EvaluateStudentAsync(2, 1, 45, 1);
+                var users = userService.RetrieveUsers(3).Result.ToList();
+                Assert.IsTrue(users.Count == 1);
+                Assert.IsTrue(users[0].Grades.Any(gr => gr.ReceivedGrade == 45));
+            }
+        }
     }
 }
+

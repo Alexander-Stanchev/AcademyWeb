@@ -75,16 +75,21 @@ namespace Academy.Services
                 throw new ArgumentNullException("Unfortunately user does not exist");
             }
 
-            if (teacher != null && assaignment.Course.TeacherId != teacher.Id)
+            if (student == null)
+            {
+                throw new ArgumentNullException("Unfortunately user does not exist");
+            }
+
+            if (assaignment.Course.TeacherId != teacher.Id)
             {
                 throw new NotEnrolledInCourseException($"Teacher {teacher.UserName} is not assigned to {assaignment.Name}.");
             }
 
-            if (student != null && student.EnrolledStudents.All(c => c.CourseId != assaignment.CourseId))
+            if (student.EnrolledStudents.All(c => c.CourseId != assaignment.CourseId))
             {
                 throw new NotEnrolledInCourseException($"Student {student.UserName} is not assigned to {assaignment.Name}.");
             }
-            //TODO: this if needs to be checked 
+             
             if (student.Grades.Any(g => g.AssignmentId == assaignment.Id))
             {
                 throw new AlreadyEvaluatedException("Student already received grade for this assignment.");

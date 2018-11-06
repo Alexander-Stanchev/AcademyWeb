@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace Academy.Services
 {
+    //TODO: This is not tested because we have the same method in userService and it is tested there. We should consider removing this one.
     public class GradeService : IGradeService
     {
         private readonly AcademySiteContext context;
