@@ -27,15 +27,28 @@ namespace Academy.Web.Areas.Administration.Controllers
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Index()
         {
-            //TODO: Метода е променен да работи с параметър и сега гърми. Добавих му параметър трябва да погленем дали всичко е ок тук.
-            var users = await this.userService.RetrieveUsers(1);
+            
+            var users = await this.userService.RetrieveUsers(3);
 
             var model = new AdminViewModel()
             {
                 Users = users.Select(us => new UsersViewModel(us))
             };
-
             return View(model);
         }
+
+        //[HttpPost]
+        //[Area("Administration")]
+        //[Authorize(Roles = "Administrator")]
+        //public async Task<IActionResult> PromoteToTeacher(UsersViewModel model)
+        //{
+        //    if (this.ModelState.IsValid)
+        //    {
+        //                                            ↓ for test purpose
+        //        await userService.UpdateRoleAsync(3, 2);
+        //        return this.RedirectToAction("index", "dashboard");
+        //    }
+        //    return View(model);
+        //}
     }
 }
