@@ -24,8 +24,8 @@ namespace Academy.Web.Controllers
         {
             return this.View();
         }
-        
 
+        [Route("error/500")]
         public IActionResult InternalServerError()
         {
             return this.View();

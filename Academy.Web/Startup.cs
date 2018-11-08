@@ -97,6 +97,11 @@ namespace Academy.Web
                     defaults: new { controller = "Error", action = "PageNotFound" });
 
                 routes.MapRoute(
+                    name: "internalservererror",
+                    template: "500",
+                    defaults: new { controller = "Error", action = "InternalServerError" });
+
+                routes.MapRoute(
                   name: "areas",
                   template: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
 

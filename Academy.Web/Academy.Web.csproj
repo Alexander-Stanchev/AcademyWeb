@@ -29,6 +29,9 @@
     <Content Update="Areas\Student\Views\_ViewStart.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Error\InternalServerError.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Error\PageNotFound.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
