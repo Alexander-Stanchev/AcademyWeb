@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Academy.Services", "Academy
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{5FF024F7-CC64-43B6-914B-D4E04C058D6C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Academy.Tests", "Academy.Tests\Academy.Tests.csproj", "{FA327CFB-73BD-4216-BDE7-B0882B55C8D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Academy.Tests", "Academy.Tests\Academy.Tests.csproj", "{FA327CFB-73BD-4216-BDE7-B0882B55C8D2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

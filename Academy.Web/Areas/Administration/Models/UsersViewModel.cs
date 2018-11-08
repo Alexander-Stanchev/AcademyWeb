@@ -10,9 +10,10 @@ namespace Academy.Web.Areas.Administration.Models
     {
         public UsersViewModel(User user)
         {
-            this.FullName = user.FullName;
+            this.FullName = user.FullName;            
+            this.Id = user.Id;
         }
-
+        public int Id { get; set; }
         public string FullName { get; set; }       
     }
 }
