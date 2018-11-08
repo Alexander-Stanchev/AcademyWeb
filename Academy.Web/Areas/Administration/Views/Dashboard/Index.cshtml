@@ -1,18 +1,21 @@
 ﻿@model Academy.Web.Areas.Administration.Models.AdminViewModel
 @{
-    ViewData["Title"] = "Index";
+    Layout = "_Layout";
 }
 
 <div class="row">
     <div class="col-md-12">
-        <h3>List of all students:</h3>
-        @foreach (var user in Model.Users)
-        {
-            <h4>@user.FullName</h4>
-        }
+        <ul>
+            List of all students:
+
+            @foreach (var user in Model.Users)
+            {
+                <h1>@user.FullName</h1>
+            }
+        </ul>
     </div>
 </div>
 
 <div class="container">
-    <a asp-area="" asp-controller="Dashboard" asp-action="Index" class="btn btn-primary">Promote to Teacher</a>
+    <a asp-area="" asp-controller="Dashboard" asp-action="Index" class="btn btn-block btn-lg btn-primary">Promote to Teacher</a>
 </div>
