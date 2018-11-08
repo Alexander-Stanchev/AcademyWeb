@@ -9,6 +9,10 @@ namespace Academy.Web.Areas.Teacher.Models
 {
     public class CourseViewModel
     {
+        public CourseViewModel()
+        {
+
+        }
         public CourseViewModel(Course course)
         {
             this.Name = course.Name;

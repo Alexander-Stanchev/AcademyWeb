@@ -3,6 +3,7 @@ using Academy.DataContext;
 using Academy.Services.Contracts;
 using Academy.Services.Exceptions;
 using demo_db.Common.Exceptions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -49,6 +50,7 @@ namespace Academy.Services
                 user.RoleId = newRoleId;
             }
 
+            this.context.UserRoles.Add(new IdentityUserRole<int>() { RoleId = newRoleId, UserId = userId });
             await context.SaveChangesAsync();
         }
 

@@ -39,10 +39,37 @@ namespace Academy.Web.Areas.Teacher.Controllers
         }
 
         [Area("Teacher")]
+        [Authorize(Roles = "Teacher")]
+        public async Task<IActionResult> Course(int id)
+        {
+            var course = await this.courseService.GetCourseByIdAsync(id);
+            var model = new CourseViewModel(course);
+            return View(model);
+        }
+
+        [HttpGet]
+        [Area("Teacher")]
         [Authorize(Roles ="Teacher")]
         public IActionResult Add()
         {
             return this.View();
+        }
+
+        [HttpPost]
+        [Area("Teacher")]
+        [Authorize(Roles ="Teacher")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Add(CourseViewModel model)
+        {
+            if (this.ModelState.IsValid)
+            {
+                var userId = int.Parse(this.userManager.GetUserId(HttpContext.User));
+                var course = await this.courseService.AddCourseAsync(userId, model.Start, model.End, model.Name);
+                TempData["Pesho"] = "Success";
+                return this.RedirectToAction("course", "dashboard", new { id = course.CourseId });
+            }
+            return this.View(model);
+
         }
     }
 }
