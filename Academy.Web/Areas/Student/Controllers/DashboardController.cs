@@ -38,8 +38,8 @@ namespace Academy.Web.Areas.Student.Controllers
             return View(model);
         }
 
-        [Area("Teacher")]
-        [Authorize(Roles = "Teacher")]
+        [Area("Student")]
+        [Authorize(Roles = "Student")]
         public IActionResult Add()
         {
             return this.View();
