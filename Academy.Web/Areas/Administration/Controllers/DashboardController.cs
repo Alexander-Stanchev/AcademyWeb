@@ -45,7 +45,7 @@ namespace Academy.Web.Areas.Administration.Controllers
             {
                 await userService.UpdateRoleAsync(model.userId, 2);
 
-                TempData["UserMessage"] = "Congrajulationz";
+                TempData["UserMessage"] = "Congrachulashionz";
 
                 return this.RedirectToAction("index", "dashboard");
             }
