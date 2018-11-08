@@ -1,10 +1,64 @@
 ﻿@using Academy.Web.Areas.Teacher.Models
-@model CourseViewModel
+@model CourseInformationModel
 @{
-    ViewData["Title"] = Model.Name;
+    ViewData["Title"] = Model.Course.Name;
 }
 
-<h1>Id : @Model.EnrolledStudentCount</h1>
-<h2>Course: @Model.Name</h2>
-<h3>Temp Data : @TempData["Pesho"]</h3>
+@if (TempData.ContainsKey("Success"))
+{
+    <div class="alert alert-success">
+        <strong>@TempData["Success"]</strong>
+    </div>
+}
 
+<h2>Course: @Model.Course.Name</h2>
+
+<h3>Enrolled Students: @Model.Course.EnrolledStudentCount</h3>
+
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Assignment Name</th>
+            <th>Due Date</th>
+            <th>Average Grade</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var assignment in Model.Assignments)
+        {
+            double average = 0;
+            if (assignment.Grades.Count() != 0)
+            {
+                average = assignment.Grades.Select(gr => gr.PointsReceived).Average();
+            }
+            <tr>
+                <td>@assignment.Name</td>
+                <td>@assignment.DueDate.ToShortDateString()</td>
+                <td>@average</td>
+                <td>
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#@assignment.Name.Replace(" ","")">
+                        Add Grade
+                    </button>
+                    @{
+                        var gradeModel = new GradeViewModel()
+                        {
+                            AssignmentName = assignment.Name,
+                            AssignmentId = assignment.Id,
+                            StudentsToBeGraded = assignment.StudentsToBeGraded
+                                .Select(st => new SelectListItem(st.UserName, st.Id.ToString()))
+
+                        };
+                    }
+                    @await Html.PartialAsync("_AddGradePartial", gradeModel)
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+
+@section Scripts{
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

@@ -21,5 +21,7 @@ namespace Academy.Data
         public DateTime End { get; set; }
 
         public ICollection<EnrolledStudent> EnrolledStudents { get; set; }
+
+        public IEnumerable<Assignment> Assignments { get; set; }
     }
 }
