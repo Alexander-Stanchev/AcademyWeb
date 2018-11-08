@@ -28,7 +28,13 @@ namespace Academy.Services
         public async Task<Course> GetCourseByIdAsync(int id)
         {
             Validations.RangeNumbers(0, int.MaxValue, id, "The id of a course can only be a postive number.");
-            return await this.context.Courses.Include(co => co.EnrolledStudents).FirstOrDefaultAsync(co => co.CourseId == id);
+            return await this.context.Courses
+                .Include(co => co.EnrolledStudents)
+                    .ThenInclude(en => en.Student)
+                .Include(co => co.Assignments)
+                    .ThenInclude(a => a.Grades)
+                        .ThenInclude(gr => gr.Student)
+                .FirstOrDefaultAsync(co => co.CourseId == id);
         }
 
         public async Task<Course> AddCourseAsync(int teacherId, DateTime start, DateTime end, string courseName)
@@ -122,7 +128,9 @@ namespace Academy.Services
         public async Task<IEnumerable<Course>> RetrieveCoursesByTeacherAsync(int teacherId)
         {
             Validations.RangeNumbers(0, int.MaxValue, teacherId, "The id of a course can only be a postive number.");
-            return await this.context.Courses.Include(co => co.EnrolledStudents).Where(co => co.TeacherId == teacherId).ToListAsync();
+            return await this.context.Courses
+                .Include(co => co.EnrolledStudents)
+                .Where(co => co.TeacherId == teacherId).ToListAsync();
         }
 
         public async Task<IEnumerable<Course>> RetrieveCoursesByStudentAsync(int studentId)
