@@ -1,23 +1,40 @@
 ﻿@model Academy.Web.Areas.Administration.Models.AdminViewModel
 @{
     ViewData["Title"] = "Index";
-    Layout = "_Layout";
 }
+
+<link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
 
 <div class="row">
     <div class="col-md-12">
         <h3>List of all students:</h3>
-        <select>
-            <option></option>
-            @foreach (var user in Model.Users)
-            {
-                <option>
-                    <h>@user.FullName</h>
-                </option>
-            }
-        </select>
 
-        <a asp-area="" asp-controller="Dashboard" asp-action="Index" class="btn btn-lg btn-primary">Promote to Teacher</a>
+        <form asp-area="administration" asp-controller="dashboard" asp-action="promote" method="post">
+            <select asp-for="userId">
+                <option>Please choose user</option>
+                @foreach (var user in Model.Users)
+                {
+                    <option value="@user.Id">
+                        @user.FullName
+                    </option>
+                }
+            </select>
+            <div class="form-group"><button type="submit" class="btn btn-success">Submit</button></div>
+        </form>
     </div>
 </div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    @if (TempData["UserMessage"] != null)
+    {
+        <script>
+       $(document).ready(function myfunction() {
+       toastr.success('@TempData["UserMessage"]', 'Miracle Max Says')
+       })
+        </script>
+    }
+}
 

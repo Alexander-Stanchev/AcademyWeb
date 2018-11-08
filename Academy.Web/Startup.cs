@@ -90,17 +90,7 @@ namespace Academy.Web
             app.UseAuthentication();
 
             app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "notfound",
-                    template: "404",
-                    defaults: new { controller = "Error", action = "PageNotFound" });
-
-                routes.MapRoute(
-                    name: "internalservererror",
-                    template: "500",
-                    defaults: new { controller = "Error", action = "InternalServerError" });
-
+            {               
                 routes.MapRoute(
                   name: "areas",
                   template: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
@@ -108,6 +98,12 @@ namespace Academy.Web
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+
+                routes.MapRoute(
+                    name: "notfound",
+                    template: "{*url}",
+                    defaults: new { controller = "Error", action = "PageNotFound" });                
+
             });
         }
     }

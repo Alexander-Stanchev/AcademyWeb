@@ -26,8 +26,7 @@ namespace Academy.Web.Areas.Administration.Controllers
         [Area("Administration")]
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Index()
-        {
-            
+        {            
             var users = await this.userService.RetrieveUsers(3);
 
             var model = new AdminViewModel()
@@ -37,18 +36,20 @@ namespace Academy.Web.Areas.Administration.Controllers
             return View(model);
         }
 
-        //[HttpPost]
-        //[Area("Administration")]
-        //[Authorize(Roles = "Administrator")]
-        //public async Task<IActionResult> PromoteToTeacher(UsersViewModel model)
-        //{
-        //    if (this.ModelState.IsValid)
-        //    {
-        //                                            ↓ for test purpose
-        //        await userService.UpdateRoleAsync(3, 2);
-        //        return this.RedirectToAction("index", "dashboard");
-        //    }
-        //    return View(model);
-        //}
+        [HttpPost]
+        [Area("Administration")]
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> Promote(AdminViewModel model)
+        {
+            if (this.ModelState.IsValid)
+            {
+                await userService.UpdateRoleAsync(model.userId, 2);
+
+                TempData["UserMessage"] = "Congrajulationz";
+
+                return this.RedirectToAction("index", "dashboard");
+            }
+            return View(model);
+        }
     }
 }
