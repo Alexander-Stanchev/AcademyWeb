@@ -12,6 +12,7 @@ namespace Academy.Services.Contracts
         Task <Course> GetCourseByIdAsync(int id);
         Task EnrollStudentToCourseAsync(int studentId, int courseId);
         Task<IEnumerable<User>> RetrieveStudentsInCourseAsync(int courseId, int roleId, int userId);
-        Task<IEnumerable<Course>> RetrieteCoursesByTeacherAsync(int teacherId);
+        Task<IEnumerable<Course>> RetrieveCoursesByTeacherAsync(int teacherId);
+        Task<IEnumerable<Course>> RetrieveCoursesByStudentAsync(int studentId);
     }
 }

@@ -28,7 +28,7 @@ namespace Academy.Services
         public async Task<Course> GetCourseByIdAsync(int id)
         {
             Validations.RangeNumbers(0, int.MaxValue, id, "The id of a course can only be a postive number.");
-            return await this.context.Courses.FirstOrDefaultAsync(co => co.CourseId == id);
+            return await this.context.Courses.Include(co => co.EnrolledStudents).FirstOrDefaultAsync(co => co.CourseId == id);
         }
 
         public async Task<Course> AddCourseAsync(int teacherId, DateTime start, DateTime end, string courseName)
@@ -119,10 +119,16 @@ namespace Academy.Services
             return await users;
         }
 
-        public async Task<IEnumerable<Course>> RetrieteCoursesByTeacherAsync(int teacherId)
+        public async Task<IEnumerable<Course>> RetrieveCoursesByTeacherAsync(int teacherId)
         {
             Validations.RangeNumbers(0, int.MaxValue, teacherId, "The id of a course can only be a postive number.");
             return await this.context.Courses.Include(co => co.EnrolledStudents).Where(co => co.TeacherId == teacherId).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Course>> RetrieveCoursesByStudentAsync(int studentId)
+        {
+            Validations.RangeNumbers(0, int.MaxValue, studentId, "The id of a student can only be a postive number.");
+            return await this.context.Courses.Include(course => course.EnrolledStudents).Where(c => c.EnrolledStudents.Any(es => es.StudentId == studentId)).ToListAsync();
         }
     }
 }

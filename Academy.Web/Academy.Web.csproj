@@ -17,16 +17,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Student\Controllers\" />
-    <Folder Include="Areas\Student\Models\" />
-    <Folder Include="Areas\Student\Views\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Update="Areas\Administration\Views\Dashboard\Index.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
     <Content Update="Areas\Administration\Views\_ViewStart.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Areas\Student\Views\_ViewImports.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Areas\Student\Views\_ViewStart.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
   </ItemGroup>

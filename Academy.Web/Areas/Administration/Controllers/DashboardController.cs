@@ -27,7 +27,8 @@ namespace Academy.Web.Areas.Administration.Controllers
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Index()
         {
-            var users = await this.userService.RetrieveUsers();
+            //TODO: Метода е променен да работи с параметър и сега гърми. Добавих му параметър трябва да погленем дали всичко е ок тук.
+            var users = await this.userService.RetrieveUsers(1);
 
             var model = new AdminViewModel()
             {

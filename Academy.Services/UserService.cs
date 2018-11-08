@@ -3,6 +3,7 @@ using Academy.DataContext;
 using Academy.Services.Contracts;
 using Academy.Services.Exceptions;
 using demo_db.Common.Exceptions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -49,14 +50,15 @@ namespace Academy.Services
                 user.RoleId = newRoleId;
             }
 
+            this.context.UserRoles.Add(new IdentityUserRole<int>() { RoleId = newRoleId, UserId = userId });
             await context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<User>> RetrieveUsers()
+        public async Task<IEnumerable<User>> RetrieveUsers(int roleId)
         {
-            var users = await this.context.Users.Where(us => us.RoleId == 3).ToListAsync();
+            var users = await this.context.Users.Where(us => us.RoleId == roleId).ToListAsync();
 
-            return users;
+            return users ?? throw new ArgumentNullException(nameof(users));
         }
 
         public async Task EvaluateStudentAsync(int studentId, int assignmentId, int grade, int teacherId)
@@ -75,16 +77,21 @@ namespace Academy.Services
                 throw new ArgumentNullException("Unfortunately user does not exist");
             }
 
-            if (teacher != null && assaignment.Course.TeacherId != teacher.Id)
+            if (student == null)
+            {
+                throw new ArgumentNullException("Unfortunately user does not exist");
+            }
+
+            if (assaignment.Course.TeacherId != teacher.Id)
             {
                 throw new NotEnrolledInCourseException($"Teacher {teacher.UserName} is not assigned to {assaignment.Name}.");
             }
 
-            if (student != null && student.EnrolledStudents.All(c => c.CourseId != assaignment.CourseId))
+            if (student.EnrolledStudents.All(c => c.CourseId != assaignment.CourseId))
             {
                 throw new NotEnrolledInCourseException($"Student {student.UserName} is not assigned to {assaignment.Name}.");
             }
-            //TODO: this if needs to be checked 
+             
             if (student.Grades.Any(g => g.AssignmentId == assaignment.Id))
             {
                 throw new AlreadyEvaluatedException("Student already received grade for this assignment.");

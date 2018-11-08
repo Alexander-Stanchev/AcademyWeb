@@ -8,8 +8,13 @@ namespace Academy.DataContext
 {
     public class AcademySiteContext : IdentityDbContext<User, IdentityRole<int>, int>
     {
+        public AcademySiteContext()
+        {
+
+        }
         public AcademySiteContext(DbContextOptions<AcademySiteContext> options) : base(options)
         {
+
         }
 
         public DbSet<Course> Courses { get; set; }
