@@ -15,12 +15,14 @@ namespace Academy.Web.Areas.Teacher.Models
         }
         public CourseViewModel(Course course)
         {
+            this.Id = course.CourseId;
             this.Name = course.Name;
             this.Start = course.Start;
             this.End = course.End;
             this.EnrolledStudentCount = course.EnrolledStudents.Count;
         }
-
+        [Required]
+        public int Id { get; set; }
         [Required]
         [MinLength(2)]
         [MaxLength(25)]

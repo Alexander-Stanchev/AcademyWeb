@@ -128,7 +128,7 @@ namespace Academy.Services
         public async Task<IEnumerable<Course>> RetrieveCoursesByStudentAsync(int studentId)
         {
             Validations.RangeNumbers(0, int.MaxValue, studentId, "The id of a student can only be a postive number.");
-            return await this.context.Courses.Where(c => c.EnrolledStudents.Any(es => es.StudentId == studentId)).ToListAsync();
+            return await this.context.Courses.Include(course => course.EnrolledStudents).Where(c => c.EnrolledStudents.Any(es => es.StudentId == studentId)).ToListAsync();
         }
     }
 }

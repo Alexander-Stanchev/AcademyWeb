@@ -20,7 +20,7 @@
                 @foreach (var course in Model.Courses)
                 {
                 <tr>
-                    <td>@course.Name</td>
+                    <td><a asp-area="teacher" asp-controller="dashboard" asp-action="course" asp-route-id="@course.Id">@course.Name</a></td>
                     <td>@course.Start.ToShortDateString()</td>
                     <td>@course.End.ToShortDateString()</td>
                     <td>@course.EnrolledStudentCount</td>
