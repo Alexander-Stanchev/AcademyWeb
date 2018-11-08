@@ -28,7 +28,7 @@ namespace Academy.Web.Areas.Student.Controllers
         {
             var studentId = int.Parse(this.userManager.GetUserId(HttpContext.User));
             var user = await this.userService.GetUserByIdAsync(studentId);
-            var courses = await this.courseService.RetrieteCoursesByTeacherAsync(studentId);
+            var courses = await this.courseService.RetrieveCoursesByStudentAsync(studentId);
             var model = new CoursesByStudentViewModel()
             {
                 UserName = user.FullName,

@@ -654,7 +654,7 @@ namespace Academy.Tests
 
                 var courseService = new CourseService(context);
 
-                var result = await courseService.RetrieteCoursesByTeacherAsync(1);
+                var result = await courseService.RetrieveCoursesByTeacherAsync(1);
 
                 Assert.IsTrue(result.Count() == 1);
                 Assert.IsTrue(result.Any(co => co.Teacher.UserName == "Pesho"));
@@ -674,9 +674,82 @@ namespace Academy.Tests
 
                 var courseService = new CourseService(context);
 
-                Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await courseService.RetrieteCoursesByTeacherAsync(-1));
+                Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await courseService.RetrieveCoursesByTeacherAsync(-1));
 
             }
         }
+
+        [TestMethod]
+        public async Task RetrieveCoursesByStudentShouldReturnCorrectCourses()
+        {
+            var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
+                .UseInMemoryDatabase(databaseName: "RetrieveCoursesByStudentShouldReturnCorrectCourses")
+                .Options;
+
+            var courseByStudent = new Course()
+            {
+                CourseId = 1,
+                Name = "Grebane s lajica",
+                EnrolledStudents = new List<EnrolledStudent>()
+            };
+
+            courseByStudent.EnrolledStudents.Add(new EnrolledStudent() { StudentId = 2, CourseId = 1 });
+
+
+            var courseNotByStudent = new Course()
+            {
+                CourseId = 2,
+                Name = "Pletene na potnici",
+                Teacher = new User
+                {
+                    UserName = "Gosho",
+                    RoleId = 2
+                }
+            };
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+                context.Courses.Add(courseByStudent);
+
+                context.Courses.Add(courseNotByStudent);
+
+                context.Users.Add(new User()
+                {
+                    Id = 2,
+                    UserName = "gosho34",
+                    FullName = "Gosho Goshev - Studentcheto",
+                    RoleId = 3
+                });
+
+                context.SaveChanges();
+
+                var courseService = new CourseService(context);
+
+                var result = await courseService.RetrieveCoursesByStudentAsync(2);
+
+                Assert.IsTrue(result.Count() == 1);
+                Assert.IsTrue(result.Any(co => co.Name == "Grebane s lajica"));
+
+            }
+        }
+
+
+        [TestMethod]
+        public void RetrieveCoursesByStudentThrowWhenIdInvalid()
+        {
+            var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
+                .UseInMemoryDatabase(databaseName: "RetrieveCoursesByStudentThrowWhenIdInvalid")
+                .Options;
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+
+                var courseService = new CourseService(context);
+
+                Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await courseService.RetrieveCoursesByStudentAsync(-1));
+
+            }
+        }
+
     }
 }
