@@ -40,7 +40,12 @@ namespace Academy.Web.Areas.Administration.Controllers
         [Area("Administration")]
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Promote(AdminViewModel model)
-        {
+        {            
+            if (model.userId < 1)
+            {
+                throw new ApplicationException($"Unable to promote this user!.");
+            }
+
             if (this.ModelState.IsValid)
             {
                 await userService.UpdateRoleAsync(model.userId, 2);

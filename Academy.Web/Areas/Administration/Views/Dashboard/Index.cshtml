@@ -11,7 +11,7 @@
 
         <form asp-area="administration" asp-controller="dashboard" asp-action="promote" method="post">
             <select asp-for="userId">
-                <option>Please choose user</option>
+                <option value="" disabled selected>Please, choose user:</option>
                 @foreach (var user in Model.Users)
                 {
                     <option value="@user.Id">
