@@ -18,7 +18,7 @@
             @if (Model.StudentsToBeGraded.Count() != 0)
             {
                 <div class="modal-body">
-                    <form class="grade-student" asp-area="teacher" asp-controller="dashboard" asp-action="gradestudent" method="post">
+                    <form class="add-grade-form" asp-area="teacher" asp-controller="dashboard" asp-action="gradestudent" method="post">
                         <div asp-validation-summary="All" class="text-danger"></div>
                         <div class="form-group">
                             <select class="form-control" asp-for="StudentId" asp-items="Model.StudentsToBeGraded"></select>
@@ -28,7 +28,7 @@
                             <input asp-for="PointsReceived" />
                             <span asp-validation-for="PointsReceived" class="text-danger"></span>
                         </div>
-                        <input class="hidden" value="@Model.AssignmentId" asp-for="AssignmentId" readonly />
+                        <input class="invisible" value="@Model.AssignmentId" asp-for="AssignmentId" readonly />
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-success save-button">Submit</button>
                     </form>
