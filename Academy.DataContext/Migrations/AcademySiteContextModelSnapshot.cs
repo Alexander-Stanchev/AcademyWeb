@@ -282,16 +282,16 @@ namespace Academy.DataContext.Migrations
                     b.HasDiscriminator().HasValue("Role");
 
                     b.HasData(
-                        new { Id = 1, ConcurrencyStamp = "d6005e9c-2529-4616-bbbe-40972fa98a4e", Name = "Administrator", NormalizedName = "ADMINISTRATOR" },
-                        new { Id = 2, ConcurrencyStamp = "719ca4fb-8a1c-40da-95c3-c89b5d199ab4", Name = "Teacher", NormalizedName = "TEACHER" },
-                        new { Id = 3, ConcurrencyStamp = "b6903c21-768f-4308-b117-319145ef11b2", Name = "Student", NormalizedName = "STUDENT" }
+                        new { Id = 1, ConcurrencyStamp = "130791b6-831e-45ff-8cd0-01c768b82d21", Name = "Administrator", NormalizedName = "ADMINISTRATOR" },
+                        new { Id = 2, ConcurrencyStamp = "c6ca8722-c2d4-4795-ba6e-8fe1348f27e1", Name = "Teacher", NormalizedName = "TEACHER" },
+                        new { Id = 3, ConcurrencyStamp = "4818f211-1b60-433b-a1df-be7ea86a231b", Name = "Student", NormalizedName = "STUDENT" }
                     );
                 });
 
             modelBuilder.Entity("Academy.Data.Assignment", b =>
                 {
                     b.HasOne("Academy.Data.Course", "Course")
-                        .WithMany()
+                        .WithMany("Assignments")
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

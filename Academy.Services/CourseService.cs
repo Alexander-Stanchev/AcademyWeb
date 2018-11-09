@@ -28,7 +28,13 @@ namespace Academy.Services
         public async Task<Course> GetCourseByIdAsync(int id)
         {
             Validations.RangeNumbers(0, int.MaxValue, id, "The id of a course can only be a postive number.");
-            return await this.context.Courses.Include(co => co.EnrolledStudents).FirstOrDefaultAsync(co => co.CourseId == id);
+            return await this.context.Courses
+                .Include(co => co.EnrolledStudents)
+                    .ThenInclude(en => en.Student)
+                .Include(co => co.Assignments)
+                    .ThenInclude(a => a.Grades)
+                        .ThenInclude(gr => gr.Student)
+                .FirstOrDefaultAsync(co => co.CourseId == id);
         }
 
         public async Task<Course> AddCourseAsync(int teacherId, DateTime start, DateTime end, string courseName)
@@ -122,7 +128,9 @@ namespace Academy.Services
         public async Task<IEnumerable<Course>> RetrieveCoursesByTeacherAsync(int teacherId)
         {
             Validations.RangeNumbers(0, int.MaxValue, teacherId, "The id of a course can only be a postive number.");
-            return await this.context.Courses.Include(co => co.EnrolledStudents).Where(co => co.TeacherId == teacherId).ToListAsync();
+            return await this.context.Courses
+                .Include(co => co.EnrolledStudents)
+                .Where(co => co.TeacherId == teacherId).ToListAsync();
         }
 
         public async Task<IEnumerable<Course>> RetrieveCoursesByStudentAsync(int studentId)
@@ -143,6 +151,44 @@ namespace Academy.Services
                 .Include(ass => ass.Course)
                 .Where(ass => ass.CourseId == courseId && ass.Course.EnrolledStudents.Any(en => en.StudentId == studentId))
                 .ToListAsync();
+        }
+
+        public async Task<Assignment> AddAssignment(int courseId, int teacherId, int maxPoints, string name, DateTime dueDate)
+        {
+            var course = await this.context.Courses
+                .Include(co => co.Assignments)
+                .FirstOrDefaultAsync(co => co.CourseId == courseId);
+            
+            var teacher = await this.context.Users.FirstOrDefaultAsync(us => us.Id == teacherId);
+
+            if(course == null || teacher == null || name == null)
+            {
+                throw new ArgumentException("Invalid parameters");
+            }
+
+            else if(course.TeacherId != teacher.Id)
+            {
+                throw new IncorrectPermissionsException("You are not authorized to add assignments for this course");
+            }
+
+            else if(course.Assignments.Any(a => a.Name == name))
+            {
+                throw new EntityAlreadyExistsException("Assignment already exists");
+            }
+            else
+            {
+                var assignment = new Assignment()
+                {
+                    Name = name,
+                    Course = course,
+                    MaxPoints = maxPoints,
+                    DateTime = dueDate
+                };
+                await this.context.Assignments.AddAsync(assignment);
+                await this.context.SaveChangesAsync();
+
+                return assignment;
+            }
         }
     }
 }

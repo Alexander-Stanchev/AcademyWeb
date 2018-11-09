@@ -1,6 +1,8 @@
 ﻿using Academy.Data;
 using Academy.DataContext;
 using Academy.Services.Contracts;
+using Academy.Services.Providers.ViewModels;
+using demo_db.Common.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -58,6 +60,47 @@ namespace Academy.Services
 
             student.Grades.Add(newGrade);
             await this.context.SaveChangesAsync();
+        }
+
+        public async Task<IList<GradeViewModel>> RetrieveGradesAsync(string username, string coursename = "")
+        {
+            var user = new User();
+            if (coursename != "")
+            {
+                user = await this.context.Users
+                    .Include(us => us.Grades)
+                         .ThenInclude(gr => gr.Assignment)
+                            .ThenInclude(a => a.Course)
+                    .FirstOrDefaultAsync(us => us.UserName == username && us.EnrolledStudents.Any(es => es.Course.Name == coursename));
+            }
+            else
+            {
+                user = await this.context.Users
+                    .Include(us => us.Grades)
+                        .ThenInclude(gr => gr.Assignment)
+                            .ThenInclude(a => a.Course)
+                .FirstOrDefaultAsync(us => us.UserName == username);
+            }
+
+            if (user == null)
+            {
+                throw new NotEnrolledInCourseException("You are not assigned to this course");
+            }
+
+            IList<GradeViewModel> gradesMapped = new List<GradeViewModel>();
+
+            foreach (var grade in user.Grades)
+            {
+                if (coursename == "")
+                {
+                    gradesMapped.Add(new GradeViewModel { Assaingment = new AssignmentViewModel { Course = new CourseViewModel { CourseName = grade.Assignment.Course.Name }, Name = grade.Assignment.Name, MaxPoints = grade.Assignment.MaxPoints }, Score = grade.ReceivedGrade });
+                }
+                else if (grade.Assignment.Course.Name == coursename)
+                {
+                    gradesMapped.Add(new GradeViewModel { Assaingment = new AssignmentViewModel { Course = new CourseViewModel { CourseName = grade.Assignment.Course.Name }, Name = grade.Assignment.Name, MaxPoints = grade.Assignment.MaxPoints }, Score = grade.ReceivedGrade });
+                }
+            }
+            return gradesMapped;
         }
     }
 }

@@ -1,21 +1,40 @@
 ﻿@model Academy.Web.Areas.Administration.Models.AdminViewModel
 @{
-    Layout = "_Layout";
+    ViewData["Title"] = "Index";
 }
+
+<link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
 
 <div class="row">
     <div class="col-md-12">
-        <ul>
-            List of all students:
+        <h3>Promote user to Teacher.</h3>
 
-            @foreach (var user in Model.Users)
-            {
-                <h1>@user.FullName</h1>
-            }
-        </ul>
+        <form asp-area="administration" asp-controller="dashboard" asp-action="promote" method="post">
+            <select asp-for="userId">
+                <option value="" disabled selected>Please, choose user:</option>
+                @foreach (var user in Model.Users)
+                {
+                    <option value="@user.Id">
+                        @user.FullName
+                    </option>
+                }
+            </select>
+            <div class="form-group"><button type="submit" class="btn btn-success">Promote</button></div>
+        </form>
     </div>
 </div>
 
-<div class="container">
-    <a asp-area="" asp-controller="Dashboard" asp-action="Index" class="btn btn-block btn-lg btn-primary">Promote to Teacher</a>
-</div>
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    @if (TempData["UserMessage"] != null)
+    {
+        <script>
+       $(document).ready(function myfunction() {
+       toastr.success('@TempData["UserMessage"]', 'Zvezdite mi go govorqt')
+       })
+        </script>
+    }
+}
+

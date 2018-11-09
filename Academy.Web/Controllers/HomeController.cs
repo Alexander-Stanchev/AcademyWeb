@@ -12,7 +12,7 @@ namespace Academy.Web.Controllers
     {
 
         public IActionResult Index()
-        {           
+        {
             return View();
         }
 
@@ -32,7 +32,7 @@ namespace Academy.Web.Controllers
 
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View("InternalServerError", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

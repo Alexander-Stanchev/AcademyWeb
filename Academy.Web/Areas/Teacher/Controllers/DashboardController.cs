@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Academy.Web.Areas.Teacher.Controllers
 {
+
+    [Area("Teacher")]
     public class DashboardController : Controller
     {
         private readonly UserManager<User> userManager;
@@ -22,7 +24,6 @@ namespace Academy.Web.Areas.Teacher.Controllers
             this.userService = userService;
         }
 
-        [Area("Teacher")]
         [Authorize(Roles ="Teacher")]
         public async Task<IActionResult> Index()
         {
@@ -38,17 +39,19 @@ namespace Academy.Web.Areas.Teacher.Controllers
             return View(model);
         }
 
-        [Area("Teacher")]
         [Authorize(Roles = "Teacher")]
         public async Task<IActionResult> Course(int id)
         {
             var course = await this.courseService.GetCourseByIdAsync(id);
-            var model = new CourseViewModel(course);
+            var model = new CourseInformationModel()
+            {
+                Course = new CourseViewModel(course),
+                Assignments = course.Assignments.Select(a => new AssignmentViewModel(a))
+            };
             return View(model);
         }
 
         [HttpGet]
-        [Area("Teacher")]
         [Authorize(Roles ="Teacher")]
         public IActionResult Add()
         {
@@ -56,7 +59,6 @@ namespace Academy.Web.Areas.Teacher.Controllers
         }
 
         [HttpPost]
-        [Area("Teacher")]
         [Authorize(Roles ="Teacher")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(CourseViewModel model)
@@ -65,11 +67,52 @@ namespace Academy.Web.Areas.Teacher.Controllers
             {
                 var userId = int.Parse(this.userManager.GetUserId(HttpContext.User));
                 var course = await this.courseService.AddCourseAsync(userId, model.Start, model.End, model.Name);
-                TempData["Pesho"] = "Success";
+                TempData["Success"] = $"Successfully added course {course.Name}";
                 return this.RedirectToAction("course", "dashboard", new { id = course.CourseId });
             }
             return this.View(model);
 
+        }
+
+        [HttpPost]
+        [Authorize(Roles ="Teacher")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GradeStudent(GradeViewModel model)
+        {
+            if (this.ModelState.IsValid)
+            {
+                var userId = int.Parse(this.userManager.GetUserId(HttpContext.User));
+                await this.userService.EvaluateStudentAsync(model.StudentId, model.AssignmentId, (int)model.PointsReceived, userId);
+                return Json(new { status = "true", studentId = model.StudentId });
+            }
+            else
+            {
+                return Json(new { status = "false"});
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Roles ="Teacher")]
+        public IActionResult NewAssignment(int id)
+        {
+            TempData["CourseId"] = id;
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize(Roles ="Teacher")]
+        public async Task<IActionResult> NewAssignment(AssignmentViewModel model)
+        {
+
+            if (this.ModelState.IsValid)
+            {
+                var userId = int.Parse(this.userManager.GetUserId(HttpContext.User));
+                var assignment = await this.courseService.AddAssignment(model.CourseId, userId, model.MaxPoints, model.Name, model.DueDate);
+                TempData["SuccessfullAssignment"] = $"Assignment {assignment.Name} added to course {assignment.Course.Name}";
+                return RedirectToAction("course", "dashboard", new { id = model.CourseId });
+            }
+
+            return this.View(model);
         }
     }
 }
