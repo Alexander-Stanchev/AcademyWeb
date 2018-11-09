@@ -22,7 +22,10 @@ namespace Academy.Services
 
         public async Task<IEnumerable<Course>> GetAllCoursesAsync()
         {
-            return await this.context.Courses.ToListAsync();
+            return await this.context.Courses
+                .Include(co => co.EnrolledStudents)
+                .Include(co => co.Assignments)
+                .ToListAsync();
         }
 
         public async Task<Course> GetCourseByIdAsync(int id)
@@ -44,7 +47,7 @@ namespace Academy.Services
 
             if (teacher.RoleId != 2)
             {
-                throw new ArgumentOutOfRangeException("You don't have access.");
+                throw new IncorrectPermissionsException("You don't have access.");
             }
 
             if (this.context.Courses.Any(co => co.Name == courseName))
@@ -77,7 +80,7 @@ namespace Academy.Services
             }
             else if (user.EnrolledStudents.Any(es => es.CourseId == course.CourseId))
             {
-                throw new CourseAlreadyEnrolledException($"You are already enrolled for the course {course.Name}.");
+                throw new EntityAlreadyExistsException($"You are already enrolled for the course {course.Name}.");
             }
             else
             {

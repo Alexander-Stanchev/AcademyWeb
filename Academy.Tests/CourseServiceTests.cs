@@ -130,7 +130,7 @@ namespace Academy.Tests
         }
 
         [TestMethod]
-        public void GetCourseByIdShouldThrowIfInvalidIdPassed()
+        public async Task GetCourseByIdShouldThrowIfInvalidIdPassed()
         {
             var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
                 .UseInMemoryDatabase(databaseName: "GetCourseByIdShouldThrowIfInvalidIdPassed")
@@ -141,7 +141,7 @@ namespace Academy.Tests
             {
                 var courseService = new CourseService(context);
 
-                Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await courseService.GetCourseByIdAsync(-1));
+                await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await courseService.GetCourseByIdAsync(-1));
             }
         }
 
@@ -180,7 +180,7 @@ namespace Academy.Tests
         }
 
         [TestMethod]
-        public void AddCourseShouldThrowIfCourseExists()
+        public async Task AddCourseShouldThrowIfCourseExists()
         {
             var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
                 .UseInMemoryDatabase(databaseName: "AddCourseShouldThrowIfCourseExists")
@@ -213,13 +213,13 @@ namespace Academy.Tests
 
                 var courseService = new CourseService(context);
 
-                Assert.ThrowsExceptionAsync<ArgumentException>(async () => await courseService.AddCourseAsync(1, startDate, endDate, courseName));
+               await Assert.ThrowsExceptionAsync<EntityAlreadyExistsException>(async () => await courseService.AddCourseAsync(1, startDate, endDate, courseName));
 
             }
         }
 
         [TestMethod]
-        public void AddCourseShouldThrowIfUserNotTeacher()
+        public async Task AddCourseShouldThrowIfUserNotTeacher()
         {
             var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
                 .UseInMemoryDatabase(databaseName: "AddCourseShouldThrowIfUserNotTeacher")
@@ -244,7 +244,7 @@ namespace Academy.Tests
 
                 var courseService = new CourseService(context);
 
-                Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await courseService.AddCourseAsync(1, startDate, endDate, courseName));
+                await Assert.ThrowsExceptionAsync<IncorrectPermissionsException>(async () => await courseService.AddCourseAsync(1, startDate, endDate, courseName));
 
             }
         }
@@ -288,7 +288,7 @@ namespace Academy.Tests
         }
 
         [TestMethod]
-        public void EnrollStudentShouldThrowIfCourseNotFound()
+        public async Task EnrollStudentShouldThrowIfCourseNotFound()
         {
             var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
                 .UseInMemoryDatabase(databaseName: "EnrollStudentShouldThrowIfCourseNotFound")
@@ -316,13 +316,13 @@ namespace Academy.Tests
 
                 var courseService = new CourseService(context);
 
-                Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await courseService.EnrollStudentToCourseAsync(1, 2));
+                await Assert.ThrowsExceptionAsync<CourseDoesntExistsException>(async () => await courseService.EnrollStudentToCourseAsync(1, 2));
 
             }
         }
 
         [TestMethod]
-        public void EnrollStudentShouldThrowIfUserAlreadyEnrolled()
+        public async Task EnrollStudentShouldThrowIfUserAlreadyEnrolled()
         {
             var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
                 .UseInMemoryDatabase(databaseName: "EnrollStudentShouldThrowIfUserAlreadyEnrolled")
@@ -351,7 +351,7 @@ namespace Academy.Tests
 
                 var courseService = new CourseService(context);
 
-                Assert.ThrowsExceptionAsync<ArgumentException>(async () => await courseService.EnrollStudentToCourseAsync(1, 1));
+                await Assert.ThrowsExceptionAsync<EntityAlreadyExistsException>(async () => await courseService.EnrollStudentToCourseAsync(1, 1));
 
             }
 
@@ -415,7 +415,7 @@ namespace Academy.Tests
         }
 
         [TestMethod]
-        public void RetrieveStudentsInCourseShouldThrowIfCourseNotFound()
+        public async Task RetrieveStudentsInCourseShouldThrowIfCourseNotFound()
         {
             var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
                 .UseInMemoryDatabase(databaseName: "RetrieveStudentsInCourseShouldThrowIfCourseNotFound")
@@ -424,7 +424,7 @@ namespace Academy.Tests
             using (var context = new AcademySiteContext(contextOptions))
             {
                 var courseService = new CourseService(context);
-                Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await courseService.RetrieveStudentsInCourseAsync(1, 1, 2));
+                await Assert.ThrowsExceptionAsync<CourseDoesntExistsException>(async () => await courseService.RetrieveStudentsInCourseAsync(1, 1, 2));
             }
         }
 
@@ -468,7 +468,7 @@ namespace Academy.Tests
                 var error = Assert.ThrowsExceptionAsync<IncorrectPermissionsException>
                     (async () => await courseService.RetrieveStudentsInCourseAsync(1, 2, 1)).GetAwaiter().GetResult();
                 Assert.AreEqual("Invalid Permission", error.Message);
-                
+
             }
         }
 
@@ -606,7 +606,7 @@ namespace Academy.Tests
 
                 var courseService = new CourseService(context);
 
-                var result = await courseService.RetrieveStudentsInCourseAsync(1,2,1);
+                var result = await courseService.RetrieveStudentsInCourseAsync(1, 2, 1);
 
                 Assert.IsTrue(result.Count() == 2);
                 Assert.IsTrue(result.Any(re => re.EnrolledStudents.Any(en => en.StudentId == 2)));
@@ -663,7 +663,7 @@ namespace Academy.Tests
         }
 
         [TestMethod]
-        public void RetrieveCoursesByTeacherThrowWhenIdInvalid()
+        public async Task RetrieveCoursesByTeacherThrowWhenIdInvalid()
         {
             var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
                 .UseInMemoryDatabase(databaseName: "RetrieveCoursesByTeacherThrowWhenIdInvalid")
@@ -674,7 +674,7 @@ namespace Academy.Tests
 
                 var courseService = new CourseService(context);
 
-                Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await courseService.RetrieveCoursesByTeacherAsync(-1));
+                await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await courseService.RetrieveCoursesByTeacherAsync(-1));
 
             }
         }
@@ -735,7 +735,7 @@ namespace Academy.Tests
 
 
         [TestMethod]
-        public void RetrieveCoursesByStudentThrowWhenIdInvalid()
+        public async Task RetrieveCoursesByStudentThrowWhenIdInvalid()
         {
             var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
                 .UseInMemoryDatabase(databaseName: "RetrieveCoursesByStudentThrowWhenIdInvalid")
@@ -746,10 +746,133 @@ namespace Academy.Tests
 
                 var courseService = new CourseService(context);
 
-                Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await courseService.RetrieveCoursesByStudentAsync(-1));
+                await Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await courseService.RetrieveCoursesByStudentAsync(-1));
 
             }
         }
 
+        [TestMethod]
+        public void AddAssignmentShouldThrowIfInvalidCourse()
+        {
+            var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
+                .UseInMemoryDatabase(databaseName: "RetrieveCoursesByStudentThrowWhenIdInvalid")
+                .Options;
+
+            var name = "TestHomework";
+            var courseId = 1;
+            var teacherId = 1;
+            var dateDue = DateTime.Now;
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+                var courseService = new CourseService(context);
+
+                Assert.ThrowsExceptionAsync<ArgumentException>(async () => await courseService.AddAssignment(courseId, teacherId, 100, name, dateDue));
+            }
+        }
+
+        [TestMethod]
+        public async Task AddAssignmentShouldThrowIfInvalidTeacher()
+        {
+            var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
+                .UseInMemoryDatabase(databaseName: "AddAssignmentShouldThrowIfInvalidTeacher")
+                .Options;
+
+            string name = "Pesho";
+            var courseId = 1;
+            var teacherId = 1;
+            var dateDue = DateTime.Now;
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+                var course = new Course
+                {
+                    CourseId = 1,
+                    Name = "MockCourse",
+                    TeacherId = 1
+                };
+
+                context.Courses.Add(course);
+                context.SaveChanges();
+
+                var courseService = new CourseService(context);
+
+                await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await courseService.AddAssignment(courseId, teacherId, 100, name, dateDue));
+            }
+        }
+
+        [TestMethod]
+        public async Task AddAssignmentShouldThrowIfInvalidName()
+        {
+            var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
+                .UseInMemoryDatabase(databaseName: "AddAssignmentShouldThrowIfInvalidName")
+                .Options;
+
+            string name = null;
+            var courseId = 1;
+            var teacherId = 1;
+            var dateDue = DateTime.Now;
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+                var course = new Course
+                {
+                    CourseId = 1,
+                    Name = "MockCourse",
+                    TeacherId = 1
+                };
+                var teacher = new User
+                {
+                    Id = 1,
+                    UserName = "Gosho"
+                };
+                context.Courses.Add(course);
+                context.Users.Add(teacher);
+                context.SaveChanges();
+
+                var courseService = new CourseService(context);
+
+               await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await courseService.AddAssignment(courseId, teacherId, 100, name, dateDue));
+            }
+        }
+
+        [TestMethod]
+        public async Task AddAssignmentShouldAddAssignmentIfCorrectParameters()
+        {
+            var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
+                .UseInMemoryDatabase(databaseName: "AddAssignmentShouldAddAssignmentIfCorrectParameters")
+                .Options;
+
+            string name = "Test Assignment";
+            var courseId = 1;
+            var teacherId = 1;
+            var dateDue = DateTime.Now;
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+                var course = new Course
+                {
+                    CourseId = 1,
+                    Name = "MockCourse",
+                    TeacherId = 1
+                };
+                var teacher = new User
+                {
+                    Id = 1,
+                    UserName = "Gosho"
+                };
+                context.Courses.Add(course);
+                context.Users.Add(teacher);
+                context.SaveChanges();
+
+                var courseService = new CourseService(context);
+
+                var assignemnt = await courseService.AddAssignment(courseId, teacherId, 100, name, dateDue);
+
+                Assert.IsTrue(assignemnt.Name == name);
+                Assert.IsTrue(context.Assignments.Any(a => a.Name == name));
+                Assert.IsTrue(context.Assignments.Count() == 1);
+            }
+        }
     }
 }
