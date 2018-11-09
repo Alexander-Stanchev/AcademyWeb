@@ -16,6 +16,7 @@ using Academy.Services;
 using Academy.Services.Contracts;
 using Academy.Services.Providers.Abstract;
 using Academy.Services.Providers;
+using Newtonsoft.Json.Serialization;
 
 namespace Academy.Web
 {
@@ -71,7 +72,12 @@ namespace Academy.Web
                 });
             }
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc()
+                .AddJsonOptions(options =>
+                    options.SerializerSettings.ContractResolver = new DefaultContractResolver())
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddKendo();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -93,8 +99,10 @@ namespace Academy.Web
 
             app.UseAuthentication();
 
+            //app.UseKendo(env);
+
             app.UseMvc(routes =>
-            {               
+            {
                 routes.MapRoute(
                   name: "areas",
                   template: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
@@ -106,7 +114,7 @@ namespace Academy.Web
                 routes.MapRoute(
                     name: "notfound",
                     template: "{*url}",
-                    defaults: new { controller = "Error", action = "PageNotFound" });                
+                    defaults: new { controller = "Error", action = "PageNotFound" });
 
             });
         }

@@ -1,7 +1,14 @@
-﻿@model Academy.Web.Areas.Student.Models.CoursesByStudentViewModel
+﻿@using Kendo.Mvc.UI
+@model Academy.Web.Areas.Student.Models.CoursesByStudentViewModel
 @{
     ViewData["Title"] = "Index";
 }
+
+<h2>Kendo UI DatePicker</h2>
+
+@(Html.Kendo().DatePicker()
+                    .Name("datepicker")
+)
 
 <div class="row">
     <div class="col-md-12">
