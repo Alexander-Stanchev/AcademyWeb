@@ -83,7 +83,7 @@ namespace Academy.Web.Areas.Teacher.Controllers
             {
                 var userId = int.Parse(this.userManager.GetUserId(HttpContext.User));
                 await this.userService.EvaluateStudentAsync(model.StudentId, model.AssignmentId, (int)model.PointsReceived, userId);
-                return Json(new { status = "true" });
+                return Json(new { status = "true", studentId = model.StudentId });
             }
             else
             {
@@ -91,5 +91,28 @@ namespace Academy.Web.Areas.Teacher.Controllers
             }
         }
 
+        [HttpGet]
+        [Authorize(Roles ="Teacher")]
+        public IActionResult NewAssignment(int id)
+        {
+            TempData["CourseId"] = id;
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize(Roles ="Teacher")]
+        public async Task<IActionResult> NewAssignment(AssignmentViewModel model)
+        {
+
+            if (this.ModelState.IsValid)
+            {
+                var userId = int.Parse(this.userManager.GetUserId(HttpContext.User));
+                var assignment = await this.courseService.AddAssignment(model.CourseId, userId, model.MaxPoints, model.Name, model.DueDate);
+                TempData["SuccessfullAssignment"] = $"Assignment {assignment.Name} added to course {assignment.Course.Name}";
+                return RedirectToAction("course", "dashboard", new { id = model.CourseId });
+            }
+
+            return this.View(model);
+        }
     }
 }

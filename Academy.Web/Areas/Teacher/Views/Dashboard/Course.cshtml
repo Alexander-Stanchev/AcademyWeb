@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = Model.Course.Name;
 }
-
+<link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
 @if (TempData.ContainsKey("Success"))
 {
     <div class="alert alert-success">
@@ -22,6 +22,7 @@
             <th>Assignment Name</th>
             <th>Due Date</th>
             <th>Average Grade</th>
+            <th><button type="button" class="btn btn-outline-info"><a asp-controller="dashboard" asp-action="newassignment" asp-area="teacher" asp-route-id="@Model.Course.Id">Add new assignment</a></button></th>
         </tr>
     </thead>
     <tbody>
@@ -61,4 +62,7 @@
 
 @section Scripts{
     @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="~/js/site.js"></script>
+
 }

@@ -7,8 +7,13 @@ using System.Linq;
 
 namespace Academy.Web.Areas.Teacher.Models
 {
+
     public class AssignmentViewModel
     {
+        public AssignmentViewModel()
+        {
+
+        }
         public AssignmentViewModel(Assignment assignment)
         {
             Id = assignment.Id;
@@ -20,15 +25,23 @@ namespace Academy.Web.Areas.Teacher.Models
                                   .Select(st => new StudentViewModel(st.Student));
         }
 
-        [Required]
         public int Id { get; set; }
 
         [Required]
+        [MaxLength(20)]
+        [MinLength(3)]
         public string Name { get; set; }
 
         public int AverageGrade { get; set; }
 
+        [Required]
         public DateTime DueDate { get; set; }
+
+        [Required]
+        public int MaxPoints { get; set; }
+
+        [Required]
+        public int CourseId { get; set; }
 
         public IEnumerable<GradeViewModel> Grades {get;set;}
 
