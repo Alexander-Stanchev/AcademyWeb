@@ -1,7 +1,14 @@
-﻿@model Academy.Web.Areas.Student.Models.CoursesByStudentViewModel
+﻿@using Kendo.Mvc.UI
+@model Academy.Web.Areas.Student.Models.CoursesByStudentViewModel
 @{
     ViewData["Title"] = "Index";
 }
+
+<h2>Kendo UI DatePicker</h2>
+
+@(Html.Kendo().DatePicker()
+                    .Name("datepicker")
+)
 
 <div class="row">
     <div class="col-md-12">
@@ -14,16 +21,29 @@
                     <th>Start Date</th>
                     <th>End Date</th>
                     <th>Enrolled Students</th>
+                    <th>Average grade</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var course in Model.Courses)
                 {
+                    double avg;
+                    try
+                    {
+                        avg = Model.Grades.Select(g => g.ReceivedGrade).Average();
+                    }
+                    catch (ArgumentNullException)
+                    {
+                        avg = 0;
+                    }
+
+
                     <tr>
-                        <td>@course.Name</td>
+                        <td><a asp-area="student" asp-controller="dashboard" asp-action="assignments" asp-route-id="@course.Id">@course.Name</a></td>
                         <td>@course.Start.ToShortDateString()</td>
                         <td>@course.End.ToShortDateString()</td>
                         <td>@course.EnrolledStudentCount</td>
+                        <td>@avg</td>
                     </tr>
                 }
             </tbody>

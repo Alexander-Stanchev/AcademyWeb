@@ -139,7 +139,21 @@ namespace Academy.Services
         public async Task<IEnumerable<Course>> RetrieveCoursesByStudentAsync(int studentId)
         {
             Validations.RangeNumbers(0, int.MaxValue, studentId, "The id of a student can only be a postive number.");
-            return await this.context.Courses.Include(course => course.EnrolledStudents).Where(c => c.EnrolledStudents.Any(es => es.StudentId == studentId)).ToListAsync();
+            return await this.context
+                .Courses
+                .Include(course => course.EnrolledStudents)
+                .Where(c => c.EnrolledStudents.Any(es => es.StudentId == studentId))
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Assignment>> RetrieveAssignmentsGradesForStudentAsync(int courseId, int studentId)
+        {
+            Validations.RangeNumbers(0, int.MaxValue, courseId, "The id of a course can only be a postive number.");
+            return await this.context
+                .Assignments.Include(ass => ass.Grades)
+                .Include(ass => ass.Course)
+                .Where(ass => ass.CourseId == courseId && ass.Course.EnrolledStudents.Any(en => en.StudentId == studentId))
+                .ToListAsync();
         }
 
         public async Task<Assignment> AddAssignment(int courseId, int teacherId, int maxPoints, string name, DateTime dueDate)

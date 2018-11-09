@@ -14,6 +14,9 @@ using Academy.DataContext;
 using Academy.Data;
 using Academy.Services;
 using Academy.Services.Contracts;
+using Academy.Services.Providers.Abstract;
+using Academy.Services.Providers;
+using Newtonsoft.Json.Serialization;
 
 namespace Academy.Web
 {
@@ -48,6 +51,8 @@ namespace Academy.Web
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<IGradeService, GradeService>();
+            services.AddScoped<IExporter, PdfExporter>();
 
             if (this.Environment.IsDevelopment())
             {
@@ -66,9 +71,13 @@ namespace Academy.Web
                     options.Lockout.MaxFailedAccessAttempts = 999;
                 });
             }
-            services.AddMemoryCache();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            
+
+            services.AddMvc()
+                .AddJsonOptions(options =>
+                    options.SerializerSettings.ContractResolver = new DefaultContractResolver())
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddKendo();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -90,22 +99,22 @@ namespace Academy.Web
 
             app.UseAuthentication();
 
+            //app.UseKendo(env);
+
             app.UseMvc(routes =>
-            {               
+            {
                 routes.MapRoute(
                   name: "areas",
                   template: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
 
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Home}/{action=Index}/{id?}");
 
                 routes.MapRoute(
                     name: "notfound",
                     template: "{*url}",
                     defaults: new { controller = "Error", action = "PageNotFound" });
-
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-           
 
             });
         }

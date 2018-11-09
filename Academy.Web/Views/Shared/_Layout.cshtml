@@ -6,6 +6,14 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
+
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- kendo js scripts -->
+    <script src="~/lib/kendo-ui/js/kendo.all.min.js"></script>
+    <script src="~/lib/kendo-ui/js/kendo.aspnetmvc.min.js"></script>
+
     <!-- Bootstrap core CSS -->
     <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
@@ -14,13 +22,17 @@
     <link href="/vendor/simple-line-icons/css/simple-line-icons.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
 
+    <!-- Kendo -->
+    <link rel="stylesheet" href="~/lib/kendo-ui/styles/kendo.common-nova.min.css" />
+    <link rel="stylesheet" href="~/lib/kendo-ui/styles/kendo.nova.min.css" />
+
     <!-- Custom styles for this template -->
     <link href="/css/site.min.css" rel="stylesheet">
 
 </head>
 <body>
     <nav class="navbar navbar-light bg-light static-top">
-        <div class="container">            
+        <div class="container">
             <div class="navbar-header">
                 <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Academy.Web</a>
                 <a asp-area="" asp-controller="Home" asp-action="Index">Home</a>
@@ -28,7 +40,7 @@
                 <a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a>
                 @if (User.IsInRole("Teacher"))
                 {
-                   <a asp-area="teacher" asp-controller="dashboard" asp-action="index">Teacher Dashboard</a>
+                    <a asp-area="teacher" asp-controller="dashboard" asp-action="index">Teacher Dashboard</a>
                 }
                 @if (User.IsInRole("Administrator"))
                 {
@@ -51,8 +63,6 @@
         </footer>
     </div>
 
-    <script src="/vendor/jquery/jquery.min.js"></script>
-    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     @RenderSection("Scripts", required: false)
 </body>

@@ -25,7 +25,7 @@ namespace Academy.Services
         {
             Validations.RangeNumbers(0, int.MaxValue, id, Validations.POSITIVE_ERROR);
 
-            var user = await this.context.Users.FirstOrDefaultAsync(us => us.Id == id);
+            var user = await this.context.Users.Include(us => us.Grades).FirstOrDefaultAsync(us => us.Id == id);
 
             return user ?? throw new ArgumentNullException(nameof(user));
         }

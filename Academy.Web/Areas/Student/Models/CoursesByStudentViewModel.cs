@@ -9,5 +9,6 @@ namespace Academy.Web.Areas.Student.Models
     {
         public string UserName { get; set; }
         public IEnumerable<CourseViewModel> Courses { get; set; }
+        public IEnumerable<GradeViewModel> Grades { get; set; }
     }
 }
