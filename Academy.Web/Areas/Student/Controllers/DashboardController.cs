@@ -29,10 +29,15 @@ namespace Academy.Web.Areas.Student.Controllers
             var studentId = int.Parse(this.userManager.GetUserId(HttpContext.User));
             var user = await this.userService.GetUserByIdAsync(studentId);
             var courses = await this.courseService.RetrieveCoursesByStudentAsync(studentId);
+            var grades = user.Grades.ToList();
+
+
             var model = new CoursesByStudentViewModel()
             {
                 UserName = user.FullName,
-                Courses = courses.Select(co => new CourseViewModel(co))
+                Courses = courses.Select(co => new CourseViewModel(co)),
+                Grades = grades.Select(gr => new GradeViewModel(gr))
+
             };
 
             return View(model);
@@ -40,9 +45,21 @@ namespace Academy.Web.Areas.Student.Controllers
 
         [Area("Student")]
         [Authorize(Roles = "Student")]
-        public IActionResult Add()
+        public async Task<IActionResult> Assignments(int Id)
         {
-            return this.View();
+            var userId = int.Parse(this.userManager.GetUserId(HttpContext.User));
+            var user =  await userService.GetUserByIdAsync(userId);
+            var assignments = await courseService.RetrieveAssignmentsGradesForStudentAsync(Id, userId);
+            var grades = user.Grades.ToList();
+            var model = new AssignmentByStudentViewModel()
+            {
+                UserName = user.FullName,
+                Assignments = assignments.Select(ass => new AssignmentViewModel(ass)),
+                Grades = grades.Select(gr => new GradeViewModel(gr))
+            };
+
+            return View(model);
         }
+
     }
 }

@@ -1,0 +1,44 @@
+﻿@using Academy.Web.Areas.Student.Models
+@model AssignmentByStudentViewModel
+@{
+    ViewData["Title"] = "Assignments";
+}
+
+
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-hover table-responsive table-bordered">
+            <caption class="caption">Assingments</caption>
+            <thead>
+                <tr>
+                    <th>Assignment Name</th>
+                    <th>Due Date</th>
+                    <th>Max Points</th>
+                    <th>Average Points</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var assignment in Model.Assignments)
+                {
+                    double grade;
+                    try
+                    {
+                        grade = Model.Grades.Where(gr => gr.Assignment.Id == assignment.Id).Select(gr => gr.ReceivedGrade).FirstOrDefault();
+                    }
+                    catch (ArgumentNullException)
+                    {
+                        grade = 0;
+                    }
+
+                    <tr>
+                        <td>@assignment.Name</td>
+                        <td>@assignment.Date.ToShortDateString()</td>
+                        <td>@assignment.MaxPoints</td>
+                        <td>@grade</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

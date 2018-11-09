@@ -14,5 +14,6 @@ namespace Academy.Services.Contracts
         Task<IEnumerable<User>> RetrieveStudentsInCourseAsync(int courseId, int roleId, int userId);
         Task<IEnumerable<Course>> RetrieveCoursesByTeacherAsync(int teacherId);
         Task<IEnumerable<Course>> RetrieveCoursesByStudentAsync(int studentId);
+        Task<IEnumerable<Assignment>> RetrieveAssignmentsGradesForStudentAsync(int courseId, int studentId);
     }
 }

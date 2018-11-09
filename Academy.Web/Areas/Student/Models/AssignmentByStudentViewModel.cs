@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace Academy.Web.Areas.Student.Models
 {
-    public class CoursesByStudentViewModel
+    public class AssignmentByStudentViewModel
     {
         public string UserName { get; set; }
-        public IEnumerable<CourseViewModel> Courses { get; set; }
+        public IEnumerable<AssignmentViewModel> Assignments { get; set; }
         public IEnumerable<GradeViewModel> Grades { get; set; }
     }
 }

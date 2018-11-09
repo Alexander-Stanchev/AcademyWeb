@@ -751,5 +751,96 @@ namespace Academy.Tests
             }
         }
 
+        [TestMethod]
+        public void RetrieveAssigmentsByCourseIdThrowWhenIdInvalid()
+        {
+            var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
+                .UseInMemoryDatabase(databaseName: "RetrieveAssigmentsByCourseIdThrowWhenIdInvalid")
+                .Options;
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+
+                var courseService = new CourseService(context);
+
+                Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(async () => await courseService.RetrieveCoursesByStudentAsync(-1));
+
+            }
+        }
+
+        [TestMethod]
+        public async Task RetrieveAssigmentsByCourseIdShouldReturnCorrectAssignments()
+        {
+            var contextOptions = new DbContextOptionsBuilder<AcademySiteContext>()
+                .UseInMemoryDatabase(databaseName: "RetrieveAssigmentsByCourseIdShouldReturnCorrectAssignments")
+                .Options;
+
+            var courseByStudent = new Course()
+            {
+                CourseId = 1,
+                Name = "Grebane s lajica",
+                EnrolledStudents = new List<EnrolledStudent>() { new EnrolledStudent() { StudentId = 2, CourseId = 1 } }
+            };
+
+            var courseByStudent2 = new Course()
+            {
+                CourseId = 2,
+                Name = "Trudni neshta",
+                EnrolledStudents = new List<EnrolledStudent>() { new EnrolledStudent() { StudentId = 3, CourseId = 2 } }
+            };
+            
+            
+            var assignment1 = new Assignment()
+            {
+                Id = 1,
+                CourseId = 1,
+                Name = "Grebane osnovi",
+                Grades = new List<Grade>() { new Grade { AssignmentId = 1, ReceivedGrade = 20, StudentId = 2} }
+            };
+
+            var assignment2 = new Assignment()
+            {
+                Id = 2,
+                CourseId = 2,
+                Name = "Qdene osnovi",
+                Grades = new List<Grade>() { new Grade { AssignmentId = 2, ReceivedGrade = 24, StudentId = 3 } }
+            };
+
+            using (var context = new AcademySiteContext(contextOptions))
+            {
+                context.Courses.Add(courseByStudent);
+                context.Courses.Add(courseByStudent2);
+
+                context.Assignments.Add(assignment1);
+                context.Assignments.Add(assignment2);
+
+                context.Users.Add(new User()
+                {
+                    Id = 2,
+                    UserName = "gosho34",
+                    FullName = "Gosho Goshev - Studentcheto",
+                    RoleId = 3
+                });
+
+                context.Users.Add(new User()
+                {
+                    Id = 3,
+                    UserName = "pesho14",
+                    FullName = "Pesho Peshev - Studentcheto",
+                    RoleId = 3
+                });
+
+                context.SaveChanges();
+
+                var courseService = new CourseService(context);
+
+                var result = await courseService.RetrieveAssignmentsGradesForStudentAsync(1, 2);
+
+                Assert.IsTrue(result.Count() == 1);
+                Assert.IsTrue(result.Any(co => co.Name == "Grebane osnovi"));
+
+            }
+        }
+
     }
 }
