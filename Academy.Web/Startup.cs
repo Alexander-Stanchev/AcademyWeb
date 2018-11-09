@@ -14,6 +14,8 @@ using Academy.DataContext;
 using Academy.Data;
 using Academy.Services;
 using Academy.Services.Contracts;
+using Academy.Services.Providers.Abstract;
+using Academy.Services.Providers;
 
 namespace Academy.Web
 {
@@ -48,6 +50,8 @@ namespace Academy.Web
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<IGradeService, GradeService>();
+            services.AddScoped<IExporter, PdfExporter>();
 
             if (this.Environment.IsDevelopment())
             {
