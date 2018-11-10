@@ -4,18 +4,28 @@
     ViewData["Title"] = "Assignments";
 }
 
+<script type="text/javascript">
+        $(document).ready(function () {
+            $('#studentAssignmentGrid').kendoGrid({
+                sortable: true,
+                pageable: {
+                    pageSize: 5,
+                    buttonCount: 5
+                }
+            });
+        });
 
+</script>
 
 <div class="row">
-    <div class="col-md-12">
-        <table class="table table-hover table-responsive table-bordered">
-            <caption class="caption">Assingments</caption>
+    <div>
+        <table id="studentAssignmentGrid">
             <thead>
                 <tr>
-                    <th>Assignment Name</th>
-                    <th>Due Date</th>
-                    <th>Max Points</th>
-                    <th>Average Points</th>
+                    <th date-field="ass">Assignment Name</th>
+                    <th date-field="date">Due Date</th>
+                    <th date-field="max">Max Points</th>
+                    <th date-field="points">Your Points</th>
                 </tr>
             </thead>
             <tbody>
