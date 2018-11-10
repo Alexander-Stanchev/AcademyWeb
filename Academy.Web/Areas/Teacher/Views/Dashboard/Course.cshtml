@@ -64,5 +64,12 @@
     @await Html.PartialAsync("_ValidationScriptsPartial")
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="~/js/site.js"></script>
-
+    @if (TempData["SuccessfullAssignment"] != null)
+    {
+        <script>
+       $(document).ready(function myfunction() {
+       toastr.success('@TempData["SuccessfullAssignment"]', 'Server Message')
+       })
+        </script>
+    }
 }
