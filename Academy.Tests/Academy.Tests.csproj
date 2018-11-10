@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Academy.DataContext\Academy.DataContext.csproj" />
     <ProjectReference Include="..\Academy.Services\Academy.Services.csproj" />
+    <ProjectReference Include="..\Academy.Web\Academy.Web.csproj" />
   </ItemGroup>
 
 </Project>

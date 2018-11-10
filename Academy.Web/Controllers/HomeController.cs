@@ -51,6 +51,11 @@ namespace Academy.Web.Controllers
             return View("InternalServerError", new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+        public IActionResult Invalid()
+        {
+            return View();
+        }
+
         private async Task<IEnumerable<Course>> GetCachedCourses()
         {
             var cacheCourses = await cacheService.GetOrCreateAsync("Data", async entry =>

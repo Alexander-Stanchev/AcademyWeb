@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using Academy.Data;
 using Academy.Services.Contracts;
 using Academy.Web.Areas.Teacher.Models;
+using Academy.Web.Utilities;
+using Academy.Web.Utilities.Wrappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,21 +15,23 @@ namespace Academy.Web.Areas.Teacher.Controllers
     [Area("Teacher")]
     public class DashboardController : Controller
     {
-        private readonly UserManager<User> userManager;
+        //private readonly UserManager<User> userManager;
         private readonly ICourseService courseService;
         private readonly IUserService userService;
+        private readonly IUserWrapper userWrapper;
 
-        public DashboardController(UserManager<User> userManager, ICourseService courseService, IUserService userService)
+        public DashboardController(ICourseService courseService, IUserService userService, IUserWrapper userWrapper)
         {
-            this.userManager = userManager;
+           // this.userManager = userManager;
             this.courseService = courseService;
             this.userService = userService;
+            this.userWrapper = userWrapper;
         }
 
         [Authorize(Roles ="Teacher")]
         public async Task<IActionResult> Index()
         {
-            var userId = int.Parse(this.userManager.GetUserId(HttpContext.User));
+            var userId = int.Parse(this.userWrapper.GetUserId(this.User));
             var user = await this.userService.GetUserByIdAsync(userId);
             var courses = await this.courseService.RetrieveCoursesByTeacherAsync(userId);
             var model = new CoursesByTeacherViewModel()
@@ -65,7 +69,7 @@ namespace Academy.Web.Areas.Teacher.Controllers
         {
             if (this.ModelState.IsValid)
             {
-                var userId = int.Parse(this.userManager.GetUserId(HttpContext.User));
+                var userId = int.Parse(this.userWrapper.GetUserId(this.User));
                 var course = await this.courseService.AddCourseAsync(userId, model.Start, model.End, model.Name);
                 TempData["Success"] = $"Successfully added course {course.Name}";
                 return this.RedirectToAction("course", "dashboard", new { id = course.CourseId });
@@ -81,7 +85,7 @@ namespace Academy.Web.Areas.Teacher.Controllers
         {
             if (this.ModelState.IsValid)
             {
-                var userId = int.Parse(this.userManager.GetUserId(HttpContext.User));
+                var userId = int.Parse(this.userWrapper.GetUserId(this.User));
                 await this.userService.EvaluateStudentAsync(model.StudentId, model.AssignmentId, (int)model.PointsReceived, userId);
                 return Json(new { status = "true", studentId = model.StudentId });
             }
@@ -106,7 +110,7 @@ namespace Academy.Web.Areas.Teacher.Controllers
 
             if (this.ModelState.IsValid)
             {
-                var userId = int.Parse(this.userManager.GetUserId(HttpContext.User));
+                var userId = int.Parse(this.userWrapper.GetUserId(this.User));
                 var assignment = await this.courseService.AddAssignment(model.CourseId, userId, model.MaxPoints, model.Name, model.DueDate);
                 TempData["SuccessfullAssignment"] = $"Assignment {assignment.Name} added to course {assignment.Course.Name}";
                 return RedirectToAction("course", "dashboard", new { id = model.CourseId });

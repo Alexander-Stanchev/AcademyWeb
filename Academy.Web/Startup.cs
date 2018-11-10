@@ -17,6 +17,8 @@ using Academy.Services.Contracts;
 using Academy.Services.Providers.Abstract;
 using Academy.Services.Providers;
 using Newtonsoft.Json.Serialization;
+using Academy.Web.Utilities;
+using Academy.Web.Utilities.Wrappers;
 
 namespace Academy.Web
 {
@@ -49,10 +51,7 @@ namespace Academy.Web
                 .AddEntityFrameworkStores<AcademySiteContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<ICourseService, CourseService>();
-            services.AddScoped<IGradeService, GradeService>();
-            services.AddScoped<IExporter, PdfExporter>();
+
 
             if (this.Environment.IsDevelopment())
             {
@@ -71,6 +70,13 @@ namespace Academy.Web
                     options.Lockout.MaxFailedAccessAttempts = 999;
                 });
             }
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<IGradeService, GradeService>();
+            services.AddScoped<IExporter, PdfExporter>();
+            services.AddScoped<IUserWrapper, UserWrapper>();
+
+            services.AddMemoryCache();
 
             services.AddMvc()
                 .AddJsonOptions(options =>
@@ -93,6 +99,9 @@ namespace Academy.Web
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+
+            app.ImportantExceptionHandling();
+                
             app.UseStatusCodePagesWithReExecute("/error/{0}");
 
             app.UseStaticFiles();
@@ -108,13 +117,13 @@ namespace Academy.Web
                   template: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
 
                 routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-
-                routes.MapRoute(
                     name: "notfound",
                     template: "{*url}",
                     defaults: new { controller = "Error", action = "PageNotFound" });
+
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Home}/{action=Index}/{id?}");
 
             });
         }
