@@ -1,0 +1,54 @@
+﻿@using Academy.Web.Areas.Student.Models
+@model AssignmentByStudentViewModel
+@{
+    ViewData["Title"] = "Assignments";
+}
+
+<script type="text/javascript">
+        $(document).ready(function () {
+            $('#studentAssignmentGrid').kendoGrid({
+                sortable: true,
+                pageable: {
+                    pageSize: 5,
+                    buttonCount: 5
+                }
+            });
+        });
+
+</script>
+
+<div class="row">
+    <div>
+        <table id="studentAssignmentGrid">
+            <thead>
+                <tr>
+                    <th date-field="ass">Assignment Name</th>
+                    <th date-field="date">Due Date</th>
+                    <th date-field="max">Max Points</th>
+                    <th date-field="points">Your Points</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var assignment in Model.Assignments)
+                {
+                    double grade;
+                    try
+                    {
+                        grade = Model.Grades.Where(gr => gr.Assignment.Id == assignment.Id).Select(gr => gr.ReceivedGrade).FirstOrDefault();
+                    }
+                    catch (ArgumentNullException)
+                    {
+                        grade = 0;
+                    }
+
+                    <tr>
+                        <td>@assignment.Name</td>
+                        <td>@assignment.Date.ToShortDateString()</td>
+                        <td>@assignment.MaxPoints</td>
+                        <td>@grade</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,75 @@
+﻿@using Academy.Web.Areas.Teacher.Models
+@model CourseInformationModel
+@{
+    ViewData["Title"] = Model.Course.Name;
+}
+<link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+@if (TempData.ContainsKey("Success"))
+{
+    <div class="alert alert-success">
+        <strong>@TempData["Success"]</strong>
+    </div>
+}
+
+<h2>Course: @Model.Course.Name</h2>
+
+<h3>Enrolled Students: @Model.Course.EnrolledStudentCount</h3>
+
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Assignment Name</th>
+            <th>Due Date</th>
+            <th>Average Grade</th>
+            <th><button type="button" class="btn btn-outline-info"><a asp-controller="dashboard" asp-action="newassignment" asp-area="teacher" asp-route-id="@Model.Course.Id">Add new assignment</a></button></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var assignment in Model.Assignments)
+        {
+            double average = 0;
+            if (assignment.Grades.Count() != 0)
+            {
+                average = assignment.Grades.Select(gr => gr.PointsReceived).Average();
+            }
+            <tr>
+                <td>@assignment.Name</td>
+                <td>@assignment.DueDate.ToShortDateString()</td>
+                <td>@average</td>
+                <td>
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#@assignment.Name.Replace(" ","")">
+                        Add Grade
+                    </button>
+                    @{
+                        var gradeModel = new GradeViewModel()
+                        {
+                            AssignmentName = assignment.Name,
+                            AssignmentId = assignment.Id,
+                            StudentsToBeGraded = assignment.StudentsToBeGraded
+                                .Select(st => new SelectListItem(st.UserName, st.Id.ToString()))
+
+                        };
+                    }
+                    @await Html.PartialAsync("_AddGradePartial", gradeModel)
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+
+@section Scripts{
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="~/js/site.js"></script>
+    @if (TempData["SuccessfullAssignment"] != null)
+    {
+        <script>
+       $(document).ready(function myfunction() {
+       toastr.success('@TempData["SuccessfullAssignment"]', 'Server Message')
+       })
+        </script>
+    }
+}

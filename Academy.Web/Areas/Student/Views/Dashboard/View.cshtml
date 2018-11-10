@@ -1,0 +1,10 @@
+﻿@using Academy.Web.Areas.Student.Models
+@model CourseViewModel
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<h1>Id : @Model.EnrolledStudentCount</h1>
+<h2>Course: @Model.Name</h2>
+<h3>Temp Data : @TempData["Pesho"]</h3>
+

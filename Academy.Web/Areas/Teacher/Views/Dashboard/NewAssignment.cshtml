@@ -1,0 +1,36 @@
+﻿@model Academy.Web.Areas.Teacher.Models.AssignmentViewModel
+@{
+    ViewData["Title"] = "Add a new assignment";
+}
+
+<h2>Add a new assignment</h2>
+<hr />
+
+<div class="col-lg-4 col-md-4 col-xs-9">
+    <form asp-area="teacher" asp-controller="dashboard" asp-action="newassignment" method="post">
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="Name"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="MaxPoints"></label>
+            <input asp-for="MaxPoints" class="form-control" />
+            <span asp-validation-for="MaxPoints" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="DueDate"></label>
+            <input asp-for="DueDate" type="date" class="form-control" />
+            <span asp-validation-for="DueDate" class="text-danger"></span>
+        </div>
+        <input class="invisible" asp-for="CourseId" value="@TempData["CourseId"]" />
+        <div class="form-group"><button type="submit" class="btn btn-success">Submit</button></div>
+
+    </form>
+</div>
+<div class="clearfix"></div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

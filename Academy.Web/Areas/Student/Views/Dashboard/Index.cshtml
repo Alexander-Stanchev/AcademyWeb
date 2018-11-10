@@ -1,0 +1,60 @@
+﻿@using Kendo.Mvc.UI
+@model Academy.Web.Areas.Student.Models.CoursesByStudentViewModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#studentCourseGrid').kendoGrid({
+            sortable: true,
+            pageable: {
+                pageSize: 5,
+                buttonCount: 5
+            }
+        });
+    });
+
+</script>
+
+<div>
+    <div>
+        <h3>Hello @Model.UserName</h3>
+        <table id="studentCourseGrid">
+            
+            <thead>
+                <tr>
+                    <th data-field="name">Course Name</th>
+                    <th data-field="start">Start Date</th>
+                    <th data-field="end">End Date</th>
+                    <th data-field="count">Enrolled Students</th>
+                    <th data-field="average">Average grade</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var course in Model.Courses)
+                {
+                    double avg;
+                    try
+                    {
+                        avg = Model.Grades.Select(g => g.ReceivedGrade).Average();
+                    }
+                    catch (ArgumentNullException)
+                    {
+                        avg = 0;
+                    }
+
+
+                    <tr>
+                        <td><a asp-area="student" asp-controller="dashboard" asp-action="assignments" asp-route-id="@course.Id">@course.Name</a></td>
+                        <td>@course.Start.ToShortDateString()</td>
+                        <td>@course.End.ToShortDateString()</td>
+                        <td>@course.EnrolledStudentCount</td>
+                        <td>@avg</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

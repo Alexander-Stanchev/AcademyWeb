@@ -121,7 +121,7 @@ namespace Academy.Web.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var user = new User { UserName = model.Email, Email = model.Email, FullName = model.FullName };               
+                var user = new User { UserName = model.Email, Email = model.Email, FullName = model.FullName, RoleId = 3 };               
                 var result = await _userManager.CreateAsync(user, model.Password);
                
                 if (result.Succeeded)
