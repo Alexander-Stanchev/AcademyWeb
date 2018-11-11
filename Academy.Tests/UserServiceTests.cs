@@ -198,7 +198,13 @@ namespace Academy.Tests
                     FullName = "Pesho Peshev",
                     RoleId = 2
                 });
-
+                context.Roles.Add(new Microsoft.AspNetCore.Identity.IdentityRole<int>()
+                {
+                    Name = "SomeRole",
+                    NormalizedName = "SOMEROLE"
+                });
+                context.SaveChanges();
+                context.UserRoles.Add(new Microsoft.AspNetCore.Identity.IdentityUserRole<int>() { UserId = 1, RoleId = 1 });
                 context.SaveChanges();
             }
 
@@ -206,9 +212,11 @@ namespace Academy.Tests
             {
                 var userService = new UserService(context);
                 await userService.UpdateRoleAsync(1, 3);
-                var user = context.Users.FirstOrDefaultAsync(us => us.Id == 1);
+                var user = await context.Users.FirstOrDefaultAsync(us => us.Id == 1);
                 
-                Assert.IsTrue(user.Result.RoleId == 3);
+                Assert.IsTrue(user.RoleId == 3);
+                Assert.IsTrue(context.UserRoles.Where(ur => ur.UserId == user.Id).ToList().Count == 1);
+                Assert.IsTrue(context.UserRoles.FirstOrDefault(ur => ur.UserId == user.Id).RoleId == 3);
             }
         }
 
@@ -244,7 +252,7 @@ namespace Academy.Tests
             using (var context = new AcademySiteContext(contextOptions))
             {
                 var userService = new UserService(context);
-                var users = await userService.RetrieveUsers(3);
+                var users = await userService.RetrieveUsersAsynca(3);
                 var usersList = users.ToList();
                 Assert.IsTrue(usersList.Count == 2);
             }
@@ -618,7 +626,7 @@ namespace Academy.Tests
             {
                 var userService = new UserService(context);
                 await userService.EvaluateStudentAsync(2, 1, 45, 1);
-                var users = userService.RetrieveUsers(3).Result.ToList();
+                var users = userService.RetrieveUsersAsynca(3).Result.ToList();
                 Assert.IsTrue(users.Count == 1);
                 Assert.IsTrue(users[0].Grades.Any(gr => gr.ReceivedGrade == 45));
             }

@@ -9,6 +9,6 @@ namespace Academy.Services.Contracts
         Task EvaluateStudentAsync(int studentId, int assignmentId, int grade, int teacherId);
         Task<User> GetUserByIdAsync(int id);
         Task UpdateRoleAsync(int userId, int newRoleId);
-        Task<IEnumerable<User>> RetrieveUsers(int roleId);
+        Task<IEnumerable<User>> RetrieveUsersAsynca(int roleId);
     }
 }

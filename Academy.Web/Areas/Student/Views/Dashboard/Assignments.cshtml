@@ -1,19 +1,24 @@
 ﻿@using Academy.Web.Areas.Student.Models
+@using System;
+@using System.IO;
+
+@using System.Text;
+
 @model AssignmentByStudentViewModel
 @{
     ViewData["Title"] = "Assignments";
 }
 
 <script type="text/javascript">
-        $(document).ready(function () {
-            $('#studentAssignmentGrid').kendoGrid({
-                sortable: true,
-                pageable: {
-                    pageSize: 5,
-                    buttonCount: 5
-                }
-            });
+    $(document).ready(function () {
+        $('#studentAssignmentGrid').kendoGrid({
+            sortable: true,
+            pageable: {
+                pageSize: 5,
+                buttonCount: 5
+            }
         });
+    });
 
 </script>
 
@@ -34,9 +39,9 @@
                     double grade;
                     try
                     {
-                        grade = Model.Grades.Where(gr => gr.Assignment.Id == assignment.Id).Select(gr => gr.ReceivedGrade).FirstOrDefault();
+                        grade = Model.Grades.FirstOrDefault(gr => gr.Assignment.Id == assignment.Id).ReceivedGrade;
                     }
-                    catch (ArgumentNullException)
+                    catch (NullReferenceException)
                     {
                         grade = 0;
                     }
@@ -50,5 +55,9 @@
                 }
             </tbody>
         </table>
+
+        <p>You can export your grades to pdf from here:</p>
+        <button class="btn"><i class="fa fa-download"></i><a asp-area="student" asp-controller="dashboard" asp-action="exporttopdf">Download PDF</a></button>
+
     </div>
 </div>

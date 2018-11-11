@@ -47,6 +47,10 @@ namespace Academy.Web.Areas.Teacher.Controllers
         public async Task<IActionResult> Course(int id)
         {
             var course = await this.courseService.GetCourseByIdAsync(id);
+            if(course == null)
+            {
+                return NotFound();
+            }
             var model = new CourseInformationModel()
             {
                 Course = new CourseViewModel(course),
