@@ -69,7 +69,7 @@ namespace Academy.Web.Areas.Student.Controllers
 
         [Area("Student")]
         [Authorize(Roles = "Student")]
-        public async Task<IActionResult> ExportToPDF()
+        public async Task<IActionResult> ExportToPDF(int Id)
         { 
             if (this.ModelState.IsValid)
             {
@@ -77,8 +77,8 @@ namespace Academy.Web.Areas.Student.Controllers
 
                 this.exporter.GenerateReport(grades, this.userManager.GetUserName(HttpContext.User));                
             }
-            //this does not work as expected
-            return File("~/PDF/", ".pdf");
+            
+            return Ok("PDF downloaded");
         }
     }
 }
