@@ -21,7 +21,7 @@ namespace Academy.Web.Areas.Teacher.Models
             this.End = course.End;
             this.EnrolledStudentCount = course.EnrolledStudents.Count;
         }
-        [Required]
+
         public int Id { get; set; }
         [Required]
         [MinLength(2)]

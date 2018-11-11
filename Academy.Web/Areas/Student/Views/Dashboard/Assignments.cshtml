@@ -36,7 +36,7 @@
                     {
                         grade = Model.Grades.Where(gr => gr.Assignment.Id == assignment.Id).Select(gr => gr.ReceivedGrade).FirstOrDefault();
                     }
-                    catch (ArgumentNullException)
+                    catch (NullReferenceException)
                     {
                         grade = 0;
                     }
