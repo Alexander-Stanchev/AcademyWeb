@@ -29,11 +29,11 @@ namespace Academy.Services
 
             return user ?? throw new ArgumentNullException(nameof(user));
         }
-        
+
         public async Task UpdateRoleAsync(int userId, int newRoleId)
         {
             Validations.RangeNumbers(0, int.MaxValue, userId, Validations.POSITIVE_ERROR);
-            
+
             if (newRoleId == 1)
             {
                 throw new IncorrectPermissionsException("You are not allowed to set someone's role to Adminitrator");
@@ -45,12 +45,16 @@ namespace Academy.Services
             {
                 throw new ArgumentNullException("User doesn't exist");
             }
-            else
-            {
-                user.RoleId = newRoleId;
-            }
+            user.RoleId = newRoleId;
 
-            this.context.UserRoles.Update(new IdentityUserRole<int>() { RoleId = newRoleId, UserId = userId });
+            var role = context.UserRoles.FirstOrDefault(r => r.UserId == userId);
+            context.UserRoles.Remove(role);
+            context.UserRoles.Add(new IdentityUserRole<int>()
+            {
+                RoleId = newRoleId,
+                UserId = user.Id
+            });
+
             await context.SaveChangesAsync();
         }
 
@@ -91,7 +95,7 @@ namespace Academy.Services
             {
                 throw new NotEnrolledInCourseException($"Student {student.UserName} is not assigned to {assaignment.Name}.");
             }
-             
+
             if (student.Grades.Any(g => g.AssignmentId == assaignment.Id))
             {
                 throw new AlreadyEvaluatedException("Student already received grade for this assignment.");
@@ -105,7 +109,7 @@ namespace Academy.Services
             };
 
             student.Grades.Add(newGrade);
-            await  this.context.SaveChangesAsync();
+            await this.context.SaveChangesAsync();
         }
 
 

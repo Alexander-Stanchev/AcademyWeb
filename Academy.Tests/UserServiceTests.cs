@@ -198,7 +198,13 @@ namespace Academy.Tests
                     FullName = "Pesho Peshev",
                     RoleId = 2
                 });
-
+                context.Roles.Add(new Microsoft.AspNetCore.Identity.IdentityRole<int>()
+                {
+                    Name = "SomeRole",
+                    NormalizedName = "SOMEROLE"
+                });
+                context.SaveChanges();
+                context.UserRoles.Add(new Microsoft.AspNetCore.Identity.IdentityUserRole<int>() { UserId = 1, RoleId = 1 });
                 context.SaveChanges();
             }
 
@@ -206,9 +212,11 @@ namespace Academy.Tests
             {
                 var userService = new UserService(context);
                 await userService.UpdateRoleAsync(1, 3);
-                var user = context.Users.FirstOrDefaultAsync(us => us.Id == 1);
+                var user = await context.Users.FirstOrDefaultAsync(us => us.Id == 1);
                 
-                Assert.IsTrue(user.Result.RoleId == 3);
+                Assert.IsTrue(user.RoleId == 3);
+                Assert.IsTrue(context.UserRoles.Where(ur => ur.UserId == user.Id).ToList().Count == 1);
+                Assert.IsTrue(context.UserRoles.FirstOrDefault(ur => ur.UserId == user.Id).RoleId == 3);
             }
         }
 

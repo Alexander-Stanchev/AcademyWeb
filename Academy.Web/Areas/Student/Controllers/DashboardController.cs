@@ -75,10 +75,14 @@ namespace Academy.Web.Areas.Student.Controllers
             {
                 var grades = await this.gradeService.RetrieveGradesAsync(this.userManager.GetUserName(HttpContext.User));
 
-                this.exporter.GenerateReport(grades, this.userManager.GetUserName(HttpContext.User));                
+                var fileName = this.exporter.GenerateReport(grades, this.userManager.GetUserName(HttpContext.User));
+
+                var file = $"wwwroot/PDF/{fileName}";
+
+                return File(System.IO.File.ReadAllBytes(file), "application/octet-stream", fileName);
             }
-            //this does not work as expected
-            return File("~/PDF/", ".pdf");
+
+            return View();
         }
     }
 }

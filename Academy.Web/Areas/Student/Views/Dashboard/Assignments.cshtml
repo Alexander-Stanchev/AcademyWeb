@@ -39,7 +39,7 @@
                     double grade;
                     try
                     {
-                        grade = Model.Grades.Where(gr => gr.Assignment.Id == assignment.Id).Select(gr => gr.ReceivedGrade).FirstOrDefault();
+                        grade = Model.Grades.FirstOrDefault(gr => gr.Assignment.Id == assignment.Id).ReceivedGrade;
                     }
                     catch (NullReferenceException)
                     {

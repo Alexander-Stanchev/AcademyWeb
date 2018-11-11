@@ -4,13 +4,14 @@ using iTextSharp.text.pdf;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace Academy.Services.Providers
 {
     public class PdfExporter : IExporter
     {
-        public void GenerateReport(IList<ViewModels.GradeViewModel> grades, string username)
+        public string GenerateReport(IList<ViewModels.GradeViewModel> grades, string username)
         {
             try
             {
@@ -32,6 +33,7 @@ namespace Academy.Services.Providers
                 string currentCourse = null;
                 var gradeTables = new List<PdfPTable>();
                 var currentTable = 0;
+                grades = grades.OrderBy(gr => gr.Assaingment.Course.CourseName).ToList();
                 foreach (var item in grades)
                 {
                     if (item.Assaingment.Course.CourseName != currentCourse)
@@ -82,7 +84,8 @@ namespace Academy.Services.Providers
 
                     pdfDoc.Close();
                     stream.Close();                    
-                }               
+                }
+                return strFileName;
             }
             catch (Exception)
             {
