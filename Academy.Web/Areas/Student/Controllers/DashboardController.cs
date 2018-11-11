@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Academy.Data;
 using Academy.Services.Contracts;
@@ -74,12 +75,10 @@ namespace Academy.Web.Areas.Student.Controllers
             {
                 var grades = await this.gradeService.RetrieveGradesAsync(this.userManager.GetUserName(HttpContext.User));
 
-                this.exporter.GenerateReport(grades, this.userManager.GetUserName(HttpContext.User));
-                
-                return this.RedirectToAction("index", "dashboard");
+                this.exporter.GenerateReport(grades, this.userManager.GetUserName(HttpContext.User));                
             }
-            //TODO
-            return this.View();
+            //this does not work as expected
+            return File("~/PDF/", ".pdf");
         }
     }
 }

@@ -54,13 +54,13 @@ namespace Academy.Services.Providers
                 }
 
                 //Set up file name and directory
-                string folderPath = ".\\PDF\\";
+                string folderPath = ".\\wwwroot\\PDF\\";
                 if (!Directory.Exists(folderPath))
                 {
                     Directory.CreateDirectory(folderPath);
                 }
 
-                int fileCount = Directory.GetFiles(@".\\PDF").Length;
+                int fileCount = Directory.GetFiles(".\\wwwroot\\PDF\\").Length;
                 string strFileName = "StudentReport" + (fileCount + 1) + ".pdf";
 
                 using (FileStream stream = new FileStream(folderPath + strFileName, FileMode.Create))
@@ -81,8 +81,8 @@ namespace Academy.Services.Providers
                     pdfDoc.NewPage();
 
                     pdfDoc.Close();
-                    stream.Close();
-                }
+                    stream.Close();                    
+                }               
             }
             catch (Exception)
             {

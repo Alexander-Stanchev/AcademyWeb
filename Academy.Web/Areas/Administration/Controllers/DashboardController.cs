@@ -14,12 +14,10 @@ namespace Academy.Web.Areas.Administration.Controllers
 
     public class DashboardController : Controller
     {
-        private readonly UserManager<User> userManager;
         private readonly IUserService userService;
 
-        public DashboardController(UserManager<User> userManager, IUserService userService)
+        public DashboardController(IUserService userService)
         {
-            this.userManager = userManager;
             this.userService = userService;
         }
 
@@ -27,7 +25,7 @@ namespace Academy.Web.Areas.Administration.Controllers
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Index()
         {            
-            var users = await this.userService.RetrieveUsers(3);
+            var users = await this.userService.RetrieveUsersAsynca(3);
 
             var model = new AdminViewModel()
             {

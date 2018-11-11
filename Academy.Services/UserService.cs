@@ -50,11 +50,11 @@ namespace Academy.Services
                 user.RoleId = newRoleId;
             }
 
-            this.context.UserRoles.Add(new IdentityUserRole<int>() { RoleId = newRoleId, UserId = userId });
+            this.context.UserRoles.Update(new IdentityUserRole<int>() { RoleId = newRoleId, UserId = userId });
             await context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<User>> RetrieveUsers(int roleId)
+        public async Task<IEnumerable<User>> RetrieveUsersAsynca(int roleId)
         {
             var users = await this.context.Users.Where(us => us.RoleId == roleId).ToListAsync();
 
