@@ -6,6 +6,6 @@ namespace Academy.Services.Providers.Abstract
 {
     public interface IExporter
     {
-        void GenerateReport(IList<ViewModels.GradeViewModel> grades, string username);
+        string GenerateReport(IList<ViewModels.GradeViewModel> grades, string username);
     }
 }

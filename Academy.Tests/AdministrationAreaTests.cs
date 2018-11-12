@@ -32,19 +32,29 @@ namespace Academy.Tests
         public async Task DashboardShouldCallCorrectServiceMethodOnce()
         {
             var userService = new Mock<IUserService>();
-            userService.Setup(us => us.UpdateRoleAsync(It.IsAny<int>(), 2));
+
+            userService.Setup(us => us.UpdateRoleAsync(It.IsAny<int>(), 2))
+                .Returns(Task.FromResult(true))
+                .Verifiable();
 
             var controller = new DashboardController(userService.Object);
-            var result = await controller.Index();
 
-            userService.Verify(us => us.UpdateRoleAsync(1, 2), Times.Once);
+            var moqTempData = new Mock<ITempDataDictionary>();
+
+            moqTempData.Setup(td => td[It.IsAny<string>()])
+                .Returns("test");
+
+            controller.TempData = moqTempData.Object;
+
+            var model = new AdminViewModel()
+            {
+                userId = 2,              
+            };
+
+            var result = await controller.Promote(model);
+
+            userService.Verify(us => us.UpdateRoleAsync(2, 2), Times.Once);
         }
-
-
-
-
-
-
 
         private DashboardController SetupControllerForAuthenticationConnectTests()
         {
@@ -60,7 +70,7 @@ namespace Academy.Tests
                         User = new ClaimsPrincipal()
                     }
                 },
-                TempData = new Mock<ITempDataDictionary>().Object
+
             };
 
             return controller;
