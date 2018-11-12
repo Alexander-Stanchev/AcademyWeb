@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Academy.Data;
@@ -8,6 +9,7 @@ using Academy.Web.Areas.Student.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Academy.Web.Areas.Student.Controllers
 {
@@ -69,7 +71,7 @@ namespace Academy.Web.Areas.Student.Controllers
 
         [Area("Student")]
         [Authorize(Roles = "Student")]
-        public async Task<IActionResult> ExportToPDF()
+        public async Task<IActionResult> ExportToPDF(int Id)
         { 
             if (this.ModelState.IsValid)
             {
@@ -82,6 +84,51 @@ namespace Academy.Web.Areas.Student.Controllers
                 return File(System.IO.File.ReadAllBytes(file), "application/octet-stream", fileName);
             }
 
+            return View();
+        }
+
+        [Area("Student")]
+        [Authorize(Roles ="Student")]
+        public async Task<IActionResult> Enroll()
+        {
+            var userId = int.Parse(this.userManager.GetUserId(HttpContext.User));
+            var allCourses = (await this.courseService.GetAllCoursesAsync()).ToList();
+            var enrolledCourses = await this.courseService.RetrieveCoursesByStudentAsync(userId);
+            foreach(var course in enrolledCourses)
+            {
+                allCourses.Remove(course);
+            }
+
+            var viewModel = new EnrollStudentViewModel()
+            {
+                UserId = userId,
+                AvailableCourses = new List<SelectListItem>()
+            };
+
+            foreach(var course in allCourses)
+            {
+                viewModel.AvailableCourses.Add(new SelectListItem(course.Name, course.CourseId.ToString()));
+            }
+
+            return View(viewModel);
+        }
+
+        [Area("Student")]
+        [Authorize(Roles ="Student")]
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public async Task<IActionResult> Enroll(EnrollStudentViewModel model)
+        {
+            if (this.ModelState.IsValid)
+            {
+                var userId = int.Parse(this.userManager.GetUserId(HttpContext.User));
+                if(userId != model.UserId)
+                {
+                    return BadRequest();
+                }
+                await this.courseService.EnrollStudentToCourseAsync(model.UserId, model.ChosenCourse);
+                return RedirectToAction("Index", "Dashboard");
+            }
             return View();
         }
     }

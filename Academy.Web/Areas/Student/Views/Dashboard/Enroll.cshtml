@@ -1,0 +1,26 @@
+﻿@model  EnrollStudentViewModel
+@{
+    ViewData["Title"] = "Enroll";
+}
+
+<h2>Enroll in a course</h2>
+<hr />
+
+<div class="col-lg-4 col-md-4 col-xs-9">
+    <form asp-area="student" asp-controller="dashboard" asp-action="enroll" method="post">
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="form-group">
+            <div class="form-group">
+                <label><strong>Choose a course</strong></label>
+                <select class="form-control" asp-for="ChosenCourse" asp-items="Model.AvailableCourses"></select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <input class="invisible" asp-for="UserId" value="@Model.UserId" />
+        </div>
+        <div class="form-group"><button type="submit" class="btn btn-success">Enroll</button></div>
+
+    </form>
+</div>
+

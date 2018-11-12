@@ -35,20 +35,20 @@
         <div class="container">
             <div class="navbar-header">
                 <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Academy.Web</a>
-                <a asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                <a asp-area="" asp-controller="Home" asp-action="About">About</a>
-                <a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a>
+                <a class="nav-item nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                <a class="nav-item nav-link" asp-area="" asp-controller="Home" asp-action="About">About</a>
+                <a class="nav-item nav-link" asp-area="" asp-controller="Home" asp-action="Contact">Contact</a>
                 @if (User.IsInRole("Teacher"))
                 {
-                    <a asp-area="teacher" asp-controller="dashboard" asp-action="index">Teacher Dashboard</a>
+                    <a class="nav-item nav-link" asp-area="teacher" asp-controller="dashboard" asp-action="index">Teacher Dashboard</a>
                 }
                 @if (User.IsInRole("Administrator"))
                 {
-                    <a asp-area="administration" asp-controller="dashboard" asp-action="index">Administrator Dashboard</a>
+                    <a class="nav-item nav-link" asp-area="administration" asp-controller="dashboard" asp-action="index">Administrator Dashboard</a>
                 }
                 @if (User.IsInRole("Student"))
                 {
-                    <a asp-area="student" asp-controller="dashboard" asp-action="index">Student Dashboard</a>
+                    <a class="nav-item nav-link" asp-area="student" asp-controller="dashboard" asp-action="index">Student Dashboard</a>
                 }
             </div>
             @await Html.PartialAsync("_LoginPartial")
