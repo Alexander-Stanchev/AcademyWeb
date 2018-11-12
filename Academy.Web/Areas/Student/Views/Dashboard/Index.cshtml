@@ -21,6 +21,7 @@
 <div>
     <div>
         <h3>Hello @Model.UserName</h3>
+        <a asp-action="enroll" asp-controller="dashboard"><button class="btn btn-dark">Enroll for a new course</button></a>
         <table id="studentCourseGrid">
             
             <thead>
@@ -51,7 +52,7 @@
                         <td>@course.Start.ToShortDateString()</td>
                         <td>@course.End.ToShortDateString()</td>
                         <td>@course.EnrolledStudentCount</td>
-                        <td>@avg</td>
+                        <td>@Math.Round(avg,2)</td>
                     </tr>
                 }
             </tbody>
