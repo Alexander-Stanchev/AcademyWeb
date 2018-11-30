@@ -25,7 +25,7 @@ namespace Academy.Web.Areas.Administration.Controllers
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Index()
         {            
-            var users = await this.userService.RetrieveUsersAsynca(3);
+            var users = await this.userService.RetrieveUsersAsync(3);
 
             var model = new AdminViewModel()
             {

@@ -252,7 +252,7 @@ namespace Academy.Tests
             using (var context = new AcademySiteContext(contextOptions))
             {
                 var userService = new UserService(context);
-                var users = await userService.RetrieveUsersAsynca(3);
+                var users = await userService.RetrieveUsersAsync(3);
                 var usersList = users.ToList();
                 Assert.IsTrue(usersList.Count == 2);
             }
@@ -626,7 +626,7 @@ namespace Academy.Tests
             {
                 var userService = new UserService(context);
                 await userService.EvaluateStudentAsync(2, 1, 45, 1);
-                var users = userService.RetrieveUsersAsynca(3).Result.ToList();
+                var users = userService.RetrieveUsersAsync(3).Result.ToList();
                 Assert.IsTrue(users.Count == 1);
                 Assert.IsTrue(users[0].Grades.Any(gr => gr.ReceivedGrade == 45));
             }

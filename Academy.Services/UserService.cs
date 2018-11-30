@@ -58,7 +58,7 @@ namespace Academy.Services
             await context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<User>> RetrieveUsersAsynca(int roleId)
+        public async Task<IEnumerable<User>> RetrieveUsersAsync(int roleId)
         {
             var users = await this.context.Users.Where(us => us.RoleId == roleId).ToListAsync();
 
